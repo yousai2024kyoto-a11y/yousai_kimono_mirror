@@ -1,0 +1,21 @@
+/* components/PromptSelectors/PromptSelectors.module.css */
+
+.selectorContainer {
+  margin-bottom: 20px;
+}
+.settingLabel {
+  font-size: 14px;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  margin-bottom: 10px;
+  display: block;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* 🌟 ここがYukata画面のチップの間隔！ */
+.chipGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* 🌟 横・縦の隙間。もっと広げたい場合は 20px や 25px に！ */
+}

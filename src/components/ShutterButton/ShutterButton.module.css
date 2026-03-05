@@ -1,0 +1,101 @@
+/* components/ShutterButton/ShutterButton.module.css */
+/* components/ShutterButton/ShutterButton.module.css の前半部分を置き換え */
+
+.hitArea {
+  position: absolute;
+  left: 50%; 
+  bottom: 15%; 
+  transform: translate(-50%, 50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+}
+
+/* 🌟 進化した外側のリング（グラスモーフィズム） */
+.outerRing {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.15); /* 半透明の白 */
+  backdrop-filter: blur(12px); /* すりガラス効果 */
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5); /* うっすら白い縁取り */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* 立体感を出す影 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.innerCircle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  
+  /* 背景を単色ではなく、下半分が黄色、上半分が白のグラデーションにする */
+  background-image: linear-gradient(to top, #f1c40f 50%, white 50%);
+  /* 背景のサイズを縦に2倍にする（黄色い部分を隠すため） */
+  background-size: 100% 200%;
+  /* 初期位置：上半分の白い部分だけを表示させる */
+  background-position: top;
+  
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  /* 背景の位置（水位）も滑らかに変化させる */
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background-position 1s linear;
+}
+
+/* 🌟 ホバー中のスタイル（水が溜まる！） */
+.innerCircle.hovering {
+  transform: scale(0.85); 
+  /* 背景の位置をずらして、下半分の黄色い部分が全体を覆うようにする */
+  background-position: bottom;
+  
+  box-shadow: 0 0 25px rgba(241, 196, 15, 0.8);
+  /* 1秒かけて水位が上がるように transition を設定（既存のまま） */
+  transition: all 1s linear; 
+}
+
+/* 🌟 撮影中のスタイル（赤く光る） */
+.innerCircle.shooting {
+  transform: scale(0.7);
+  background-color: #ff4757;
+  box-shadow: 0 0 25px rgba(255, 71, 87, 0.8); /* まわりが赤く発光する！ */
+  transition: all 0.1s ease-out; /* 撮影の瞬間は素早く反応させる */
+}
+
+/* 🌟 ここから追加：カウントダウンの巨大な数字 */
+.countdownOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* 画面のど真ん中に配置 */
+  font-size: 150px;
+  color: white;
+  font-weight: bold;
+  text-shadow: 0px 4px 15px rgba(0, 0, 0, 0.6);
+  z-index: 20;
+  pointer-events: none; /* マウスの邪魔をしない */
+  
+  /* 1秒かけてポンッと出て消えるアニメーション */
+  animation: popIn 1s ease-out forwards;
+}
+
+@keyframes popIn {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+  20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+}
+
+/* components/ShutterButton/ShutterButton.module.css の末尾に追記 */
+
+/* 🌟 指が上に乗っている（ホバー中）のスタイル */
+.innerCircle.hovering {
+  transform: scale(0.9); /* 少しだけ小さくする */
+  background-color: #f1c40f; /* 待機中であることがわかるように黄色っぽくする */
+  
+  /* 1秒（1000ms）かけてジワ〜っと色と大きさが変わるようにする */
+  /* タイマーと同じ秒数にすると、ゲージが溜まっていくように見えます！ */
+  transition: all 2s linear; 
+}

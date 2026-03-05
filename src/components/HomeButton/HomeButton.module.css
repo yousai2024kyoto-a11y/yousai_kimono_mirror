@@ -1,0 +1,58 @@
+/* components/HomeButton/HomeButton.module.css */
+
+.button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  
+  border-radius: 30px; 
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  
+  /* 背景を単色ではなく、下半分が半透明の白、上半分がさらに薄い白のグラデーションにする */
+  background-image: linear-gradient(to top, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0.15) 50%);
+  /* 背景のサイズを縦に2倍にする */
+  background-size: 100% 200%;
+  /* 初期位置：上半分の薄い部分だけを表示させる */
+  background-position: top;
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  
+  /* 背景の位置（水位）も滑らかに変化させる */
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background-position 1s linear;
+}
+
+/* ホバー時（マウス操作用） */
+.button:hover {
+  /* マウスホバー時は瞬時に水が溜まるようにする */
+  background-position: bottom;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.button:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 🌟 AIの指が重なっている（ホバー中）のスタイル */
+.button.hovering {
+  /* 背景の位置をずらして、下半分の白い部分が全体を覆うようにする */
+  background-position: bottom;
+
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  
+  /* 2.5秒かけて水位が上がるように transition を設定（既存のまま） */
+  transition: all 2.5s linear; 
+}

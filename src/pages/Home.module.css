@@ -1,0 +1,79 @@
+/* pages/Home.module.css */
+
+.container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 🌟 右上のギアアイコン（設定ボタン） */
+.settingsButton {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.settingsButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg) scale(1.1); /* クルッと回るアニメーション */
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+}
+
+/* メインコンテンツ */
+.mainContent {
+  text-align: center;
+  z-index: 10;
+}
+
+.title {
+  font-size: 48px;
+  margin: 0 0 10px 0;
+  letter-spacing: 2px;
+  text-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+}
+
+.subtitle {
+  font-size: 18px;
+  color: #aaa;
+  margin-bottom: 50px;
+}
+
+/* はじめるボタン */
+.startButton {
+  padding: 15px 40px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.startButton:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4);
+}

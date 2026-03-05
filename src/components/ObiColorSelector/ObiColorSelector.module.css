@@ -1,0 +1,27 @@
+/* components/ObiColorSelector/ObiColorSelector.module.css */
+
+.container {
+  margin-bottom: 25px;
+}
+
+.container:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  font-size: 15px;
+  color: white;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
+  margin-bottom: 12px;
+  display: block;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* 🌟 将来、レイアウトを変更したくなった時はここだけをイジればOK！ */
+.group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px; 
+}

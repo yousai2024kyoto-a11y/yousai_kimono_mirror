@@ -1,0 +1,82 @@
+/* components/GestureButton/GestureButton.module.css */
+
+/* =========================================
+   1. Preview画面用の「デカいパネルボタン」 (variant="panel")
+========================================= */
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  /* 🌟 パネルのサイズはここで調整！ */
+  width: 80%;       /* 親要素に対する横幅 */
+  height: 120px;    /* 縦幅（大きくしたい場合は150pxなどに） */
+  font-size: 20px;  /* 文字の大きさ */
+  gap: 10px;        /* アイコン(📸)と文字の隙間 */
+
+  cursor: pointer;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-image: linear-gradient(to top, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.05) 50%);
+  background-size: 100% 200%;
+  background-position: top;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background-position 2.5s linear;
+}
+
+.panel.hovering {
+  background-position: bottom;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: all 2.5s linear;
+}
+
+
+/* =========================================
+   2. Yukata画面用の「小さい設定チップ」 (variant="chip")
+========================================= */
+.chip {
+  /* 🌟 チップのサイズはここで調整！ */
+  padding: 10px 20px; /* 縦の余白10px、横の余白20px */
+  font-size: 16px;    /* 文字の大きさ */
+  border-radius: 30px;/* 角の丸み */
+
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 2px solid #ddd;
+  color: #333;
+  cursor: pointer;
+  font-weight: bold;
+  position: relative;
+  background-image: linear-gradient(to top, #f1c40f 50%, rgba(255, 255, 255, 0.9) 50%);
+  background-size: 100% 200%;
+  background-position: top;
+  transition: all 0.2s, background-position 2.5s linear;
+  /* 1. 横幅を固定する（一番文字数が長い「おまかせ」が綺麗に入るサイズ） */
+  width: 140px; 
+  
+  /* 2. paddingを含めて140pxになるように計算させる（はみ出し防止の魔法） */
+  box-sizing: border-box; 
+  
+  /* 3. 中の文字と色の丸を「左寄せ」にして整列させる（中央揃えが良い場合は center に変更） */
+  justify-content: flex-start;
+}
+
+.chip.active {
+  background-position: bottom;
+  color: white;
+  border-color: #f1c40f;
+  box-shadow: 0 4px 15px rgba(241, 196, 15, 0.5);
+}
+
+.chip.hovering {
+  background-position: bottom;
+  transform: scale(1.05);
+  border-color: #f1c40f;
+  transition: all 2.5s linear;
+}
