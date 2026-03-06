@@ -14,7 +14,11 @@ import styles from './Yukata.module.css';
 
 function Guidance() {
   const { fingerPosition } = useHandTrackingContext();
-  return !fingerPosition ? <div className={styles.guidanceText}>画面の前に立ってください</div> : null;
+  return (
+    <div className={styles.guidanceChip}>
+      {fingerPosition ? "設定を選んで、シャッターを押してください" : "画面の前に立ってください"}
+    </div>
+  );
 }
 
 export default function Yukata() {
@@ -37,53 +41,59 @@ export default function Yukata() {
   return (
     <HandTrackingProvider videoRef={videoRef}>
       <div className={styles.container}>
-        {/* レイヤー1: カメラ映像 */}
-        <div className={styles.cameraWrapper}>
+        
+        {/* Layer 1: Camera */}
+        <div className={styles.cameraLayer}>
           <Camera videoRef={videoRef} />
         </div>
 
-        {/* レイヤー2: UIオーバーレイ */}
-        <div className={styles.uiOverlay}>
-          <header className={styles.header}>
+        {/* Layer 2: Grid UI */}
+        <div className={styles.uiLayer}>
+          
+          {/* Header Area */}
+          <div className={styles.headerArea}>
             <Guidance />
-          </header>
+          </div>
 
-          <main className={styles.mainContent}>
-            <div className={styles.desktopOnly}>
-              <aside className={styles.sidePanel}>
-                <ObiColorSelector value={obiColor} onChange={setObiColor} />
-              </aside>
-            </div>
-
-            <ShutterButton videoRef={videoRef} onCapture={handleCapture} />
-
-            <div className={styles.desktopOnly}>
-              <aside className={styles.sidePanel}>
-                <PersonSelector value={targetPerson} onChange={setTargetPerson} />
-                <div style={{ marginTop: '15px' }}>
-                  <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
-                </div>
-              </aside>
-            </div>
-          </main>
-
-          <footer className={styles.footer}>
-            <div className={styles.mobilePanel}>
-              <div className={styles.scrollRow}>
-                <PersonSelector value={targetPerson} onChange={setTargetPerson} />
-                <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
-              </div>
+          {/* Left Sidebar (PC Only) */}
+          <aside className={`${styles.sidebarLeft} ${styles.desktopOnly}`}>
+            <div className={styles.glassPanel}>
               <ObiColorSelector value={obiColor} onChange={setObiColor} />
             </div>
+          </aside>
+
+          {/* Center Area (Shutter) */}
+          <main className={styles.centerArea}>
+            <ShutterButton videoRef={videoRef} onCapture={handleCapture} />
+          </main>
+
+          {/* Right Sidebar (PC Only) */}
+          <aside className={`${styles.sidebarRight} ${styles.desktopOnly}`}>
+            <div className={styles.glassPanel}>
+              <PersonSelector value={targetPerson} onChange={setTargetPerson} />
+            </div>
+            <div className={styles.glassPanel}>
+              <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
+            </div>
+          </aside>
+
+          {/* Bottom Sheet (Mobile Only) */}
+          <footer className={`${styles.bottomSheet} ${styles.mobileOnly}`}>
+            <div className={styles.scrollRow}>
+              <PersonSelector value={targetPerson} onChange={setTargetPerson} />
+              <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
+            </div>
+            <ObiColorSelector value={obiColor} onChange={setObiColor} />
           </footer>
+
         </div>
 
-        {/* 最前面レイヤー: ホームボタンとポインター */}
-        <div className={styles.topLeftOverlay}>
+        {/* Layer 3: Fixed Elements */}
+        <div className={styles.homeButtonPos}>
           <HomeButton onClick={() => navigate('/')} />
         </div>
 
-        {isCapturing && <div className={styles.flashOverlay} />}
+        {isCapturing && <div className={styles.flash} />}
         <HandPointer />
       </div>
     </HandTrackingProvider>

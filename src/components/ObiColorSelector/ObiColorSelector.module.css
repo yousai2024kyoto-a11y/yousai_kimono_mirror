@@ -1,33 +1,33 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   padding: 5px;
   width: 100%;
 }
 
 .label {
   font-family: var(--font-display);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--color-secondary);
   letter-spacing: 0.1em;
   margin-bottom: 2px;
-  padding-left: 8px;
+  padding-left: 10px;
   border-left: 2px solid var(--color-secondary);
 }
 
 .group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
-/* 🌟 スマホ時は2列または横並びに */
-@media (max-width: 900px) or (orientation: portrait) {
+/* スマホ時は2列グリッドでコンパクトに */
+@media (max-width: 768px) {
   .group {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
   }
 }
 
@@ -35,16 +35,15 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 12px;
+  gap: 12px;
+  padding: 8px 12px;
   justify-content: flex-start !important;
-  min-width: 120px;
 }
 
 .swatch {
-  width: 18px;
-  height: 18px;
-  border-radius: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
   flex-shrink: 0;
 }
 
@@ -52,15 +51,15 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  line-height: 1.1;
+  line-height: 1.2;
 }
 
 .japaneseName {
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   opacity: 0.7;
 }
 
 .mainName {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 500;
 }
