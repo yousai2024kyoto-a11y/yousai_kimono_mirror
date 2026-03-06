@@ -1,3 +1,7 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 :root {
   /* 和のカラーパレット */
   --color-bg: #0f1216;

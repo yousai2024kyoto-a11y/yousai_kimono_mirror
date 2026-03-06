@@ -24,6 +24,8 @@
   display: flex;
   flex-direction: column;
   pointer-events: none;
+  /* 🌟 安全圏（Safe Area）を考慮しつつ、はみ出しを防ぐ */
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) 0;
 }
 
 .topSection {
@@ -32,17 +34,16 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-top: env(safe-area-inset-top);
   gap: 5px;
 }
 
-/* 🌟 パネルを画面左右の縁から確実に浮かせる */
+/* 🌟 コンテナ幅を100%に固定し、パディングを内側に効かせる */
 .midSection {
   flex: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 4vw; /* 🌟 3vwから4vwに拡大して、より余裕を持たせる */
+  padding: 0 5vw; /* 🌟 4vwから5vwに増やして、よりはっきりとした隙間を確保 */
   width: 100%;
 }
 
