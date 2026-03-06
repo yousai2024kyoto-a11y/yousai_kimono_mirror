@@ -19,7 +19,7 @@
   z-index: 1;
 }
 
-/* 🌟 刷新したレイヤー構造 */
+/* 🌟 操作UIレイヤー */
 .uiOverlay {
   position: relative;
   z-index: 10;
@@ -27,48 +27,47 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  pointer-events: none; /* 下のカメラやHomeボタンを邪魔しない */
+  justify-content: space-between;
+  pointer-events: none;
 }
 
 .header {
-  height: 80px;
+  padding: 40px 20px 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: env(safe-area-inset-top);
+  pointer-events: none;
 }
 
+/* PC時の横並びレイアウト */
 .mainContent {
   flex: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 40px;
   pointer-events: none;
 }
 
 .sidePanel {
-  background: rgba(15, 18, 22, 0.8);
-  backdrop-filter: blur(10px);
+  background: rgba(15, 18, 22, 0.85);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   padding: 15px;
   pointer-events: auto;
-  max-width: 220px;
+  min-width: 200px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-.footer {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* 表示切り替え */
 .desktopOnly { display: block; }
 .mobileOnly { display: none; }
 
+/* 🌟 スマホ時の縦積みレイアウト（下部集約） */
 @media (max-width: 900px) or (orientation: portrait) {
   .mainContent {
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: flex-end; /* 下に寄せる */
     padding: 0;
   }
 
@@ -79,14 +78,15 @@
     width: 100%;
     background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%);
     backdrop-filter: blur(10px);
-    border-radius: 20px 20px 0 0;
-    padding: 15px 10px 30px;
+    border-radius: 24px 24px 0 0;
+    padding: 20px 15px 40px;
     pointer-events: auto;
     display: flex;
     flex-direction: column;
     gap: 15px;
   }
 
+  /* セレクターをコンパクトに並べる */
   .scrollRow {
     display: flex;
     overflow-x: auto;
@@ -94,24 +94,24 @@
     padding-bottom: 5px;
     scrollbar-width: none;
   }
-  .scrollRow::-webkit-scrollbar { display: none; }
 }
 
+/* ホームボタン */
 .topLeftOverlay {
   position: absolute;
-  top: 15px;
-  left: 15px;
+  top: 20px;
+  left: 20px;
   z-index: 100;
   pointer-events: auto;
 }
 
 .guidanceText {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   color: var(--color-secondary);
-  padding: 8px 20px;
+  padding: 10px 25px;
   border-radius: 50px;
   font-size: 0.9rem;
-  pointer-events: none;
+  border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 .flashOverlay {

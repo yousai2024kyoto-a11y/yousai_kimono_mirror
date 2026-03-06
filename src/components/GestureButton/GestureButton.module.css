@@ -3,19 +3,30 @@
   background: rgba(20, 20, 25, 0.7);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 16px;
-  padding: 20px 40px;
+  border-radius: 12px;
+  padding: 12px 24px; /* PCサイズ */
   color: var(--color-text);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  min-width: 180px;
+  min-width: 140px;
   overflow: hidden;
+}
+
+/* 🌟 スマホ時のサイズ制限 */
+@media (max-width: 600px) {
+  .panel {
+    padding: 8px 16px;
+    min-width: 100px;
+    font-size: 0.85rem;
+    gap: 6px;
+    border-radius: 8px;
+  }
 }
 
 .chip {
@@ -23,47 +34,57 @@
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50px; /* 丸みを強く */
-  padding: 10px 24px;
+  border-radius: 50px;
+  padding: 8px 16px;
   color: var(--color-text);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   transition: all 0.2s ease;
-  min-width: 80px;
-  overflow: hidden;
+  min-width: 60px;
 }
 
-/* ホバー時の挙動 */
+@media (max-width: 600px) {
+  .chip {
+    padding: 5px 12px;
+    font-size: 0.75rem;
+  }
+}
+
 .hovering {
   transform: scale(1.05);
   background: rgba(40, 40, 50, 0.8);
   border-color: var(--color-secondary);
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); /* 黄金色の光彩 */
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
 }
 
-/* アクティブ（選択中）の状態 */
 .active {
-  background: var(--color-primary); /* 今様色 */
+  background: var(--color-primary);
   border-color: rgba(255, 255, 255, 0.4);
   box-shadow: 0 0 15px rgba(179, 62, 92, 0.6);
   font-weight: 700;
 }
 
-/* プログレスリングのコンテナ */
 .progressRing {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(-90deg); /* 12時から開始 */
-  width: 60px;
-  height: 60px;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  width: 44px; /* PC */
+  height: 44px;
   pointer-events: none;
   z-index: 0;
   opacity: 0.8;
+}
+
+@media (max-width: 600px) {
+  .progressRing {
+    width: 32px;
+    height: 32px;
+  }
 }
 
 .progressCircle {
@@ -71,7 +92,6 @@
   stroke-linecap: round;
 }
 
-/* コンテンツはリングの上に表示 */
 .content {
   position: relative;
   z-index: 1;
