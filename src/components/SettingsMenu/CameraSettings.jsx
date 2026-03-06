@@ -8,40 +8,43 @@ export default function CameraSettings() {
 
   const loadCameras = async () => {
     try {
-      // 🌟 重要：一度カメラ権限を要求しないと、デバイス名（label）が取得できないブラウザが多い
+      // 🌟 一旦カメラを開いて権限を確定させる
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       
       // デバイス一覧を取得
       const devices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = devices.filter(device => device.kind === 'videoinput');
-      setCameras(videoDevices);
+      
+      // 重複を除去（一部ブラウザ対策）
+      const uniqueDevices = videoDevices.filter((device, index, self) =>
+        index === self.findIndex((t) => t.deviceId === device.deviceId)
+      );
 
-      // 使用が終わった一時的なストリームを止める
+      setCameras(uniqueDevices);
+
+      // ストリームを止める
       stream.getTracks().forEach(track => track.stop());
     } catch (error) {
-      console.error("カメラリストの取得に失敗しました:", error);
-      // 権限拒否された場合でもリストだけは試みる
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(device => device.kind === 'videoinput');
-      setCameras(videoDevices);
+      console.error("カメラリスト取得エラー:", error);
     }
   };
 
   useEffect(() => {
     loadCameras();
-
-    // 保存されているカメラ設定を読み込む
     const savedId = localStorage.getItem('preferredCameraId');
     if (savedId) setSelectedCameraId(savedId);
   }, []);
 
   const handleCameraChange = (e) => {
     const newId = e.target.value;
+    console.log("Saving new camera ID:", newId);
     setSelectedCameraId(newId);
     localStorage.setItem('preferredCameraId', newId);
-    // 🌟 即座に反映させるためにページをリロードするか、親に通知する
-    // 今回は最も確実な「リロード（再起動）」を促すか、自動で行います
-    window.location.reload(); 
+    
+    // 🌟 即座に反映させるためのリロード
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   return (
@@ -58,7 +61,7 @@ export default function CameraSettings() {
         value={selectedCameraId} 
         onChange={handleCameraChange}
       >
-        <option value="">デフォルト</option>
+        <option value="">デフォルト（自動）</option>
         {cameras.map(camera => (
           <option key={camera.deviceId} value={camera.deviceId}>
             {camera.label || `カメラ (${camera.deviceId.substring(0, 5)})`}

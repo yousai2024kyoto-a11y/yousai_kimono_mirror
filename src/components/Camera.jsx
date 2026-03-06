@@ -7,11 +7,27 @@ function Camera({ deviceId, videoRef }) {
     let currentStream = null;
 
     const startCamera = async () => {
+      // 🌟 前のストリームを確実に停止させる（重要）
+      if (videoRef.current && videoRef.current.srcObject) {
+        const oldStream = videoRef.current.srcObject;
+        oldStream.getTracks().forEach(track => track.stop());
+        videoRef.current.srcObject = null;
+      }
+
+      // 🌟 少しだけ待機（iOS Safariなどのリソース競合対策）
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       try {
-        // 🌟 deviceIdがある場合はそれを優先、ない場合はfacingMode指定
-        const videoConstraints = deviceId 
-          ? { deviceId: { exact: deviceId } } 
-          : { facingMode: 'user' };
+        let videoConstraints;
+        
+        if (deviceId) {
+          // 🌟 ID指定がある場合は、facingModeを指定しない（衝突防止）
+          videoConstraints = { deviceId: { exact: deviceId } };
+        } else {
+          // デフォルトは背面の「environment」を試みる（ミラー体験として外を映したい場合があるため）
+          // または、スマホの標準的な挙動に合わせる
+          videoConstraints = { facingMode: 'user' };
+        }
 
         const stream = await navigator.mediaDevices.getUserMedia({ 
           video: {
@@ -27,14 +43,11 @@ function Camera({ deviceId, videoRef }) {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           
+          // イン/アウト判定
           const track = stream.getVideoTracks()[0];
           const settings = track.getSettings();
           const label = track.label.toLowerCase();
           
-          // 🌟 反転判定の強化
-          // 1. facingMode をチェック
-          // 2. ラベルに front/selfie/user が含まれるかチェック
-          // 3. 背面カメラ（environment/back/rear）でない場合は、PCなどを含め「正面」とみなす
           const isBack = settings.facingMode === 'environment' || 
                          label.includes('back') || 
                          label.includes('rear') || 
@@ -43,12 +56,14 @@ function Camera({ deviceId, videoRef }) {
           setIsFrontCamera(!isBack);
         }
       } catch (error) {
-        console.error("カメラ起動エラー:", error);
-        // deviceId指定で失敗した場合はデフォルトで再試行
+        console.error("カメラ起動失敗:", error);
+        // 万が一ID指定で失敗した場合は、最も緩い制約で再試行
         if (deviceId) {
-          console.log("デフォルトカメラで再試行します...");
-          const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true });
-          if (videoRef.current) videoRef.current.srcObject = fallbackStream;
+          try {
+            const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            currentStream = fallbackStream;
+            if (videoRef.current) videoRef.current.srcObject = fallbackStream;
+          } catch (e) { console.error("完全失敗:", e); }
         }
       }
     };
