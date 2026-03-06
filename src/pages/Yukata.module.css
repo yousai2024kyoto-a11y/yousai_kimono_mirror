@@ -35,12 +35,13 @@
   padding-top: env(safe-area-inset-top);
 }
 
+/* 🌟 パネルを画面端から浮かせるための余白調整 */
 .midSection {
   flex: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 1vw; /* 🌟 ギリギリまで寄せる */
+  padding: 0 3vw; /* 🌟 左右に3%の隙間を確保 */
   width: 100%;
 }
 
@@ -52,27 +53,31 @@
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* 🌟 超極細パネル (ウィンドウの約1割強) */
+/* 🌟 角を少し丸めてフローティング感を出す */
 .panel {
   background: rgba(15, 18, 22, 0.7);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 5px;
+  border-radius: 16px; /* 10pxから拡大 */
+  padding: 8px;
   pointer-events: auto;
-  width: clamp(60px, 12vw, 180px); /* 🌟 幅を12vwに劇的縮小 */
+  width: clamp(70px, 13vw, 180px);
   max-height: 75vh;
   overflow-y: auto;
   scrollbar-width: none;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* 影を強くして浮かせる */
 }
 .panel::-webkit-scrollbar { display: none; }
 
 /* スマホ版のさらなるスリム化 */
 @media (max-width: 600px) {
   .panel {
-    width: 15vw; /* スマホ時は少し広めに15vw */
-    padding: 4px;
+    width: 16vw; 
+    padding: 6px;
+    border-radius: 12px;
+  }
+  .midSection {
+    padding: 0 2vw; /* スマホでは2%程度に */
   }
 }
 
@@ -86,8 +91,8 @@
 
 .homeBtn {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 20px; /* 10pxから拡大して余白を持たせる */
+  left: 20px;
   z-index: 100;
   pointer-events: auto;
 }
