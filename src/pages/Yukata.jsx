@@ -16,7 +16,7 @@ function Guidance() {
   const { fingerPosition } = useHandTrackingContext();
   return (
     <div className={styles.guidance}>
-      {fingerPosition ? "設定を選んで、シャッターを押してください" : "画面の前に立ってください"}
+      {fingerPosition ? "設定を選び、シャッターへ手をかざしてください" : "画面の前に立ってください"}
     </div>
   );
 }
@@ -30,6 +30,7 @@ export default function Yukata() {
   const videoRef = useRef(null);
 
   const handleCapture = (photoData) => {
+    if (isCapturing) return;
     setIsCapturing(true); 
     sessionStorage.setItem('originalPhoto', photoData);
     sessionStorage.setItem('targetPerson', targetPerson);
@@ -42,29 +43,28 @@ export default function Yukata() {
     <HandTrackingProvider videoRef={videoRef}>
       <div className={styles.container}>
         
-        {/* 背景: カメラ */}
         <div className={styles.cameraLayer}>
           <Camera videoRef={videoRef} />
         </div>
 
-        {/* 🌟 3セクションHUDレイアウト */}
         <div className={styles.uiLayer}>
           
+          {/* 上部: 案内 + 上部シャッター */}
           <section className={styles.topSection}>
             <Guidance />
+            <ShutterButton videoRef={videoRef} onCapture={handleCapture} position="top" />
           </section>
 
+          {/* 中央: 左右にパネルを配置 (PC/スマホ共通) */}
           <section className={styles.midSection}>
-            {/* PC左 */}
-            <aside className={`${styles.panel} ${styles.desktopSidebar}`}>
+            <aside className={styles.panel}>
               <ObiColorSelector value={obiColor} onChange={setObiColor} />
             </aside>
 
-            {/* 中央シャッター */}
-            <ShutterButton videoRef={videoRef} onCapture={handleCapture} />
+            {/* 中央はあえて空けて被写体を見せる */}
+            <div style={{ flex: 1, pointerEvents: 'none' }} />
 
-            {/* PC右 */}
-            <aside className={`${styles.panel} ${styles.desktopSidebar}`}>
+            <aside className={styles.panel}>
               <PersonSelector value={targetPerson} onChange={setTargetPerson} />
               <div style={{ marginTop: '10px' }}>
                 <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
@@ -72,20 +72,13 @@ export default function Yukata() {
             </aside>
           </section>
 
+          {/* 下部: 下部シャッター */}
           <section className={styles.bottomSection}>
-            {/* スマホ用パネル（縦長時のみ表示） */}
-            <div className={styles.mobilePanel}>
-              <div className={styles.scrollRow}>
-                <PersonSelector value={targetPerson} onChange={setTargetPerson} />
-                <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
-              </div>
-              <ObiColorSelector value={obiColor} onChange={setObiColor} />
-            </div>
+            <ShutterButton videoRef={videoRef} onCapture={handleCapture} position="bottom" />
           </section>
 
         </div>
 
-        {/* 固定パーツ */}
         <div className={styles.homeBtn}>
           <HomeButton onClick={() => navigate('/')} />
         </div>

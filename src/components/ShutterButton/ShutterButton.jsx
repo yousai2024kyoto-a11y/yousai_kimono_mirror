@@ -3,7 +3,7 @@ import { useRef, useEffect, useState } from 'react';
 import { useHandTrackingContext } from '../../contexts/HandTrackingContext';
 import styles from './ShutterButton.module.css';
 
-export default function ShutterButton({ videoRef, onCapture }) {
+export default function ShutterButton({ videoRef, onCapture, position = 'bottom' }) {
   const { fingerPosition } = useHandTrackingContext();
   const canvasRef = useRef(null);
   const [countdown, setCountdown] = useState(null); 
@@ -11,15 +11,19 @@ export default function ShutterButton({ videoRef, onCapture }) {
   const [hoverProgress, setHoverProgress] = useState(0);
   const startTimeRef = useRef(null);
   const animationFrameRef = useRef(null);
+  const buttonRef = useRef(null);
 
   const DURATION = 2000; 
 
-  // ジェスチャー判定
   useEffect(() => {
-    if (fingerPosition && !isShootingRef.current) {
+    if (fingerPosition && !isShootingRef.current && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const fingerX = (1 - fingerPosition.x) * window.innerWidth;
+      const fingerY = fingerPosition.y * window.innerHeight;
+
       const isInside = 
-        (fingerPosition.x > 0.4 && fingerPosition.x < 0.6 && fingerPosition.y > 0.05 && fingerPosition.y < 0.25) ||
-        (fingerPosition.x > 0.4 && fingerPosition.x < 0.6 && fingerPosition.y > 0.75 && fingerPosition.y < 0.95);
+        fingerX >= rect.left && fingerX <= rect.right &&
+        fingerY >= rect.top && fingerY <= rect.bottom;
 
       if (isInside) {
         if (!startTimeRef.current) {
@@ -79,12 +83,11 @@ export default function ShutterButton({ videoRef, onCapture }) {
 
   return (
     <>
-      <div className={styles.shutterContainer}>
-        {/* 🌟 物理クリック(onClick)を確実に追加 */}
+      <div className={styles.shutterWrapper}>
         <button 
+          ref={buttonRef}
           className={styles.shutterButton} 
           onClick={triggerShutter}
-          aria-label="シャッター"
         >
           <div className={styles.innerCircle}>
             {hoverProgress > 0 && (

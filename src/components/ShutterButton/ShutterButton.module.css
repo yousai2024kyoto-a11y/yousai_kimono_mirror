@@ -1,35 +1,31 @@
-.shutterContainer {
-  position: relative;
-  z-index: 100;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 15px;
+.shutterWrapper {
   pointer-events: auto;
 }
 
 .shutterButton {
-  width: 64px; /* さらに一回り小さく */
-  height: 64px;
+  width: clamp(60px, 8vmin, 80px);
+  height: clamp(60px, 8vmin, 80px);
   border-radius: 50%;
-  border: 3px solid white;
-  background: rgba(255, 255, 255, 0.2);
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px);
   padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 0 15px rgba(0,0,0,0.4);
-  transition: transform 0.2s;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  transition: transform 0.2s, background 0.2s;
   cursor: pointer;
 }
 
 .shutterButton:active {
   transform: scale(0.9);
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .innerCircle {
-  width: 48px;
-  height: 48px;
+  width: 75%;
+  height: 75%;
   border-radius: 50%;
   background-color: var(--color-primary);
   position: relative;
@@ -47,10 +43,7 @@
 
 .countdownOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
   background: rgba(0, 0, 0, 0.3);
   display: flex;
   justify-content: center;
@@ -60,8 +53,8 @@
 }
 
 .countdownNumber {
-  font-size: 6rem;
+  font-size: clamp(5rem, 30vmin, 12rem);
   color: white;
   font-family: var(--font-display);
-  text-shadow: 0 0 20px rgba(0,0,0,0.5);
+  text-shadow: 0 0 30px rgba(0,0,0,0.5);
 }

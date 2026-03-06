@@ -10,14 +10,12 @@
   flex-direction: column;
 }
 
-/* カメラは背景に固定 */
 .cameraLayer {
   position: absolute;
   inset: 0;
   z-index: 0;
 }
 
-/* 🌟 メインHUDレイヤー */
 .uiLayer {
   position: relative;
   z-index: 10;
@@ -28,92 +26,70 @@
   pointer-events: none;
 }
 
-/* 上部エリア（15%） */
+/* 上部セクション: ガイダンスと上部シャッター */
 .topSection {
-  height: 15%;
+  height: 20%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 10px;
+  padding-top: env(safe-area-inset-top);
+  gap: 10px;
 }
 
-/* 中央エリア（60%）: PCは左右にパネル、中央にシャッター */
+/* 🌟 メイン中央セクション: 左右にパネル、中央は空間 */
 .midSection {
   flex: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 5vw;
+  padding: 0 2vw; /* 隙間を詰める */
+  width: 100%;
 }
 
-/* 下部エリア（25%）: スマホ時に活躍 */
+/* 下部セクション: 下部シャッター */
 .bottomSection {
-  height: auto;
-  min-height: 15%;
+  height: 20%;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* パネル（Glassmorphism）: サイズを相対化 */
+/* 🌟 パネル（Glassmorphism）: スマホでも左右に置くため幅を制限 */
 .panel {
   background: rgba(15, 18, 22, 0.85);
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 15px;
-  padding: 1.5vmin;
+  padding: 10px;
   pointer-events: auto;
-  max-width: 25vw;
-  display: flex;
-  flex-direction: column;
-  gap: 1vmin;
+  width: clamp(140px, 35vw, 260px); /* 🌟 スマホで重ならないための絶妙な幅 */
+  max-height: 60vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
+.panel::-webkit-scrollbar { display: none; }
 
-/* 🌟 スマホ（縦長）向けの劇的変化 */
-@media (max-width: 768px) or (orientation: portrait) {
+/* スマホ特有の調整: フォントサイズをさらに絞る */
+@media (max-width: 600px) {
+  .panel {
+    padding: 8px;
+    width: 42vw; /* スマホ時は左右に42%づつ配置（中央に16%の空き） */
+  }
   .midSection {
-    flex-direction: column;
-    justify-content: center;
-    padding: 0;
+    padding: 0 5px;
   }
-
-  .desktopSidebar {
-    display: none !important;
-  }
-
-  .mobilePanel {
-    width: 95vw;
-    max-width: none;
-    background: rgba(10, 10, 12, 0.9);
-    border-radius: 20px;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    pointer-events: auto;
-  }
-
-  .scrollRow {
-    display: flex;
-    overflow-x: auto;
-    gap: 10px;
-    padding-bottom: 5px;
-    width: 100%;
-  }
-}
-
-/* 表示制御 */
-@media (min-width: 769px) and (orientation: landscape) {
-  .mobilePanel { display: none !important; }
 }
 
 .guidance {
   background: rgba(0, 0, 0, 0.6);
   color: var(--color-secondary);
-  padding: 8px 24px;
+  padding: 6px 20px;
   border-radius: 50px;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 .homeBtn {
