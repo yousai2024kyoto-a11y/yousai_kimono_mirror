@@ -109,6 +109,13 @@
   pointer-events: auto;
 }
 
+@media (max-width: 600px) {
+  .homeBtn {
+    top: 10px;
+    left: 10px;
+  }
+}
+
 .flash {
   position: absolute;
   inset: 0;
