@@ -7,27 +7,23 @@ function Camera({ deviceId, videoRef }) {
     let currentStream = null;
 
     const startCamera = async () => {
-      // 🌟 前のストリームを確実に停止させる（重要）
+      // 🌟 既存のトラックを物理的に全て停止
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+      }
       if (videoRef.current && videoRef.current.srcObject) {
         const oldStream = videoRef.current.srcObject;
         oldStream.getTracks().forEach(track => track.stop());
         videoRef.current.srcObject = null;
       }
 
-      // 🌟 少しだけ待機（iOS Safariなどのリソース競合対策）
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // iOS Safari等のリソース解放待ち
+      await new Promise(resolve => setTimeout(resolve, 300));
 
       try {
-        let videoConstraints;
-        
-        if (deviceId) {
-          // 🌟 ID指定がある場合は、facingModeを指定しない（衝突防止）
-          videoConstraints = { deviceId: { exact: deviceId } };
-        } else {
-          // デフォルトは背面の「environment」を試みる（ミラー体験として外を映したい場合があるため）
-          // または、スマホの標準的な挙動に合わせる
-          videoConstraints = { facingMode: 'user' };
-        }
+        const videoConstraints = deviceId 
+          ? { deviceId: { exact: deviceId } } 
+          : { facingMode: 'user' };
 
         const stream = await navigator.mediaDevices.getUserMedia({ 
           video: {
@@ -43,11 +39,11 @@ function Camera({ deviceId, videoRef }) {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           
-          // イン/アウト判定
           const track = stream.getVideoTracks()[0];
           const settings = track.getSettings();
           const label = track.label.toLowerCase();
           
+          // 反転判定
           const isBack = settings.facingMode === 'environment' || 
                          label.includes('back') || 
                          label.includes('rear') || 
@@ -56,14 +52,14 @@ function Camera({ deviceId, videoRef }) {
           setIsFrontCamera(!isBack);
         }
       } catch (error) {
-        console.error("カメラ起動失敗:", error);
-        // 万が一ID指定で失敗した場合は、最も緩い制約で再試行
+        console.error("Camera start error:", error);
+        // ID指定で失敗した場合は、最低限のカメラを起動
         if (deviceId) {
           try {
-            const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true });
-            currentStream = fallbackStream;
-            if (videoRef.current) videoRef.current.srcObject = fallbackStream;
-          } catch (e) { console.error("完全失敗:", e); }
+            const fallback = await navigator.mediaDevices.getUserMedia({ video: true });
+            currentStream = fallback;
+            if (videoRef.current) videoRef.current.srcObject = fallback;
+          } catch (e) {}
         }
       }
     };

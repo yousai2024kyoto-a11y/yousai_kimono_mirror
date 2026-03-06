@@ -5,18 +5,13 @@ const HandTrackingContext = createContext(null);
 export const HandTrackingProvider = ({ children, videoRef, isEnabled = true }) => {
   const [fingerPosition, setFingerPosition] = useState(null);
   const handsRef = useRef(null);
-  const cameraRef = useRef(null);
+  const animationFrameRef = useRef(null);
 
   useEffect(() => {
     let isComponentMounted = true;
-    let checkInterval;
 
     if (!isEnabled) {
       setFingerPosition(null);
-      if (cameraRef.current) {
-        cameraRef.current.stop();
-        cameraRef.current = null;
-      }
       if (handsRef.current) {
         handsRef.current.close();
         handsRef.current = null;
@@ -24,8 +19,9 @@ export const HandTrackingProvider = ({ children, videoRef, isEnabled = true }) =
       return;
     }
 
+    // MediaPipe Handsの初期化
     const initMediaPipe = () => {
-      if (!window.Hands || !window.Camera) return;
+      if (!window.Hands) return;
 
       handsRef.current = new window.Hands({
         locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`,
@@ -48,37 +44,37 @@ export const HandTrackingProvider = ({ children, videoRef, isEnabled = true }) =
         }
       });
 
-      if (videoRef.current) {
-        cameraRef.current = new window.Camera(videoRef.current, {
-          onFrame: async () => {
-            if (handsRef.current && videoRef.current && isComponentMounted) {
-              await handsRef.current.send({ image: videoRef.current });
-            }
-          },
-          width: 640,
-          height: 480,
-        });
-        cameraRef.current.start();
-      }
+      // 🌟 自前でカメラを起動せず、videoRefの映像をループで解析する
+      const processVideo = async () => {
+        if (handsRef.current && videoRef.current && videoRef.current.readyState >= 2) {
+          try {
+            await handsRef.current.send({ image: videoRef.current });
+          } catch (e) {
+            console.error("MediaPipe Analysis Error:", e);
+          }
+        }
+        if (isComponentMounted && isEnabled) {
+          animationFrameRef.current = requestAnimationFrame(processVideo);
+        }
+      };
+
+      processVideo();
     };
 
+    // 準備ができ次第開始
     const checkReady = () => {
-      if (window.Hands && window.Camera && videoRef.current) {
-        clearInterval(checkInterval);
+      if (window.Hands && videoRef.current) {
         initMediaPipe();
+      } else {
+        setTimeout(checkReady, 500);
       }
     };
 
-    checkInterval = setInterval(checkReady, 500);
     checkReady();
 
     return () => {
       isComponentMounted = false;
-      clearInterval(checkInterval);
-      if (cameraRef.current) {
-        cameraRef.current.stop();
-        cameraRef.current = null;
-      }
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
       if (handsRef.current) {
         handsRef.current.close();
         handsRef.current = null;
