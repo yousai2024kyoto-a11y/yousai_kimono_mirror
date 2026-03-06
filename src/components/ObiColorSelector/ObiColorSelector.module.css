@@ -1,65 +1,54 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 5px;
+  gap: 8px;
   width: 100%;
 }
 
 .label {
   font-family: var(--font-display);
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--color-secondary);
   letter-spacing: 0.1em;
-  margin-bottom: 2px;
-  padding-left: 10px;
+  padding-left: 8px;
   border-left: 2px solid var(--color-secondary);
+  margin-bottom: 4px;
 }
 
 .group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-/* スマホ時は2列グリッドでコンパクトに */
-@media (max-width: 768px) {
-  .group {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px;
-  }
+  gap: 6px;
 }
 
 .colorCard {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
+  gap: 10px;
+  padding: 4px 8px;
   justify-content: flex-start !important;
 }
 
 .swatch {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
 }
 
 .colorInfo {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .japaneseName {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   opacity: 0.7;
 }
 
 .mainName {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 500;
 }

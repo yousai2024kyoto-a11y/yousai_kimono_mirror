@@ -4,26 +4,40 @@ import GestureButton from './GestureButton/GestureButton';
 export default function Print({ generatedImage }) {
   
   const handlePrint = () => {
-    // 画像がまだ生成されていない時は何もしない
     if (!generatedImage) return;
     
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       printWindow.document.write(`
+        <!DOCTYPE html>
         <html>
           <head>
-            <title>AI 浴衣 - 印刷</title>
+            <title>AI Kimono Mirror - Print</title>
             <style>
-              body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #fff; }
-              img { max-width: 100%; max-height: 100%; object-fit: contain; }
-              @media print {
-                @page { margin: 0; }
-                body { margin: 1cm; }
+              /* 🌟 印刷用の純粋なスタイル設定 */
+              @page {
+                margin: 0;
+                size: auto;
+              }
+              body {
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                background-color: #fff;
+              }
+              img {
+                max-width: 100%;
+                max-height: 100vh;
+                object-fit: contain;
+                display: block;
               }
             </style>
           </head>
           <body>
-            <img src="${generatedImage}" onload="window.print(); window.close();" />
+            <img src="${generatedImage}" onload="window.print(); setTimeout(() => window.close(), 500);" />
           </body>
         </html>
       `);
@@ -35,7 +49,7 @@ export default function Print({ generatedImage }) {
 
   return (
     <GestureButton variant="panel" onClick={handlePrint}>
-      <span style={{ fontSize: '32px' }}>🖨️</span>
+      <span style={{ fontSize: '24px' }}>🖨️</span>
       <span>印刷する</span>
     </GestureButton>
   );
