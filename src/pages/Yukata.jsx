@@ -12,30 +12,18 @@ import { HandTrackingProvider, useHandTrackingContext } from '../contexts/HandTr
 import HandPointer from '../components/HandPointer/HandPointer';
 import styles from './Yukata.module.css';
 
-function GuidanceSystem() {
+function Guidance() {
   const { fingerPosition } = useHandTrackingContext();
-  if (!fingerPosition) {
-    return <div className={styles.guidanceText}>画面の前に立ってください</div>;
-  }
-  return null;
+  return !fingerPosition ? <div className={styles.guidanceText}>画面の前に立ってください</div> : null;
 }
 
 export default function Yukata() {
   const navigate = useNavigate();
-  const [targetCameraId, setTargetCameraId] = useState(null);
   const [targetPerson, setTargetPerson] = useState('woman');
   const [obiColor, setObiColor] = useState('auto');
   const [backgroundStyle, setBackgroundStyle] = useState('style_studio');
-  const [useAI, setUseAI] = useState(true);
   const [isCapturing, setIsCapturing] = useState(false);
   const videoRef = useRef(null);
-
-  useEffect(() => {
-    const savedId = localStorage.getItem('preferredCameraId');
-    if (savedId) setTargetCameraId(savedId);
-    const savedAI = localStorage.getItem('useMediaPipe');
-    if (savedAI !== null) setUseAI(savedAI === 'true');
-  }, []);
 
   const handleCapture = (photoData) => {
     setIsCapturing(true); 
@@ -47,49 +35,50 @@ export default function Yukata() {
   };
 
   return (
-    <HandTrackingProvider videoRef={videoRef} isEnabled={useAI}>
+    <HandTrackingProvider videoRef={videoRef}>
       <div className={styles.container}>
-        
+        {/* レイヤー1: カメラ映像 */}
         <div className={styles.cameraWrapper}>
-          <Camera deviceId={targetCameraId} videoRef={videoRef} />
+          <Camera videoRef={videoRef} />
         </div>
 
+        {/* レイヤー2: UIオーバーレイ */}
         <div className={styles.uiOverlay}>
-          {/* 上部 */}
           <header className={styles.header}>
-            <GuidanceSystem />
+            <Guidance />
           </header>
 
-          {/* 左サイド（PC用） */}
-          <aside className={styles.overlayLeft}>
-            <ObiColorSelector value={obiColor} onChange={setObiColor} />
-          </aside>
+          <main className={styles.mainContent}>
+            <div className={styles.desktopOnly}>
+              <aside className={styles.sidePanel}>
+                <ObiColorSelector value={obiColor} onChange={setObiColor} />
+              </aside>
+            </div>
 
-          {/* 中央（シャッター） */}
-          <main className={styles.centerArea}>
             <ShutterButton videoRef={videoRef} onCapture={handleCapture} />
+
+            <div className={styles.desktopOnly}>
+              <aside className={styles.sidePanel}>
+                <PersonSelector value={targetPerson} onChange={setTargetPerson} />
+                <div style={{ marginTop: '15px' }}>
+                  <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
+                </div>
+              </aside>
+            </div>
           </main>
 
-          {/* 右サイド（PC用） */}
-          <aside className={styles.overlayRight}>
-            <PersonSelector value={targetPerson} onChange={setTargetPerson} />
-            <div style={{ marginTop: '20px' }}>
-              <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
-            </div>
-          </aside>
-
-          {/* 下部パネル（モバイル用） */}
-          <footer className={styles.mobileControls}>
-            <div className={styles.horizontalScroll}>
-              <PersonSelector value={targetPerson} onChange={setTargetPerson} />
-              <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
-            </div>
-            <div style={{ padding: '0 10px' }}>
+          <footer className={styles.footer}>
+            <div className={styles.mobilePanel}>
+              <div className={styles.scrollRow}>
+                <PersonSelector value={targetPerson} onChange={setTargetPerson} />
+                <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
+              </div>
               <ObiColorSelector value={obiColor} onChange={setObiColor} />
             </div>
           </footer>
         </div>
 
+        {/* 最前面レイヤー: ホームボタンとポインター */}
         <div className={styles.topLeftOverlay}>
           <HomeButton onClick={() => navigate('/')} />
         </div>

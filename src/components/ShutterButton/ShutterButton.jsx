@@ -6,29 +6,20 @@ import styles from './ShutterButton.module.css';
 export default function ShutterButton({ videoRef, onCapture }) {
   const { fingerPosition } = useHandTrackingContext();
   const canvasRef = useRef(null);
-  const [isShooting, setIsShooting] = useState(false);
   const [countdown, setCountdown] = useState(null); 
   const isShootingRef = useRef(false);
-  
-  // ホバー進行度 (0〜100)
   const [hoverProgress, setHoverProgress] = useState(0);
   const startTimeRef = useRef(null);
   const animationFrameRef = useRef(null);
 
-  const DURATION = 2000; // 2秒キープでシャッター
+  const DURATION = 2000; 
 
+  // ジェスチャー判定
   useEffect(() => {
     if (fingerPosition && !isShootingRef.current) {
-      // 🌟 上部エリア または 下部エリア
-      const isTopArea = 
-        fingerPosition.x > 0.4 && fingerPosition.x < 0.6 &&
-        fingerPosition.y > 0.05 && fingerPosition.y < 0.25;
-
-      const isBottomArea = 
-        fingerPosition.x > 0.4 && fingerPosition.x < 0.6 &&
-        fingerPosition.y > 0.75 && fingerPosition.y < 0.95;
-
-      const isInside = isTopArea || isBottomArea;
+      const isInside = 
+        (fingerPosition.x > 0.4 && fingerPosition.x < 0.6 && fingerPosition.y > 0.05 && fingerPosition.y < 0.25) ||
+        (fingerPosition.x > 0.4 && fingerPosition.x < 0.6 && fingerPosition.y > 0.75 && fingerPosition.y < 0.95);
 
       if (isInside) {
         if (!startTimeRef.current) {
@@ -37,22 +28,13 @@ export default function ShutterButton({ videoRef, onCapture }) {
             const elapsed = time - startTimeRef.current;
             const progress = Math.min((elapsed / DURATION) * 100, 100);
             setHoverProgress(progress);
-
-            if (progress < 100) {
-              animationFrameRef.current = requestAnimationFrame(animate);
-            } else {
-              triggerShutter();
-              resetHover();
-            }
+            if (progress < 100) animationFrameRef.current = requestAnimationFrame(animate);
+            else triggerShutter();
           };
           animationFrameRef.current = requestAnimationFrame(animate);
         }
-      } else {
-        resetHover();
-      }
-    } else {
-      resetHover();
-    }
+      } else resetHover();
+    } else resetHover();
   }, [fingerPosition]);
 
   const resetHover = () => {
@@ -62,8 +44,8 @@ export default function ShutterButton({ videoRef, onCapture }) {
   };
 
   const triggerShutter = () => {
+    if (isShootingRef.current) return;
     isShootingRef.current = true;
-    setIsShooting(true); 
     setCountdown(3); 
   };
 
@@ -75,10 +57,7 @@ export default function ShutterButton({ videoRef, onCapture }) {
     } else if (countdown === 0) {
       takePhoto();
       setCountdown(null);
-      setTimeout(() => {
-        isShootingRef.current = false;
-        setIsShooting(false);
-      }, 1000);
+      setTimeout(() => { isShootingRef.current = false; }, 1000);
     }
   }, [countdown]);
 
@@ -98,39 +77,28 @@ export default function ShutterButton({ videoRef, onCapture }) {
     }
   };
 
-  // 共通のボタンUIパーツ
-  const ButtonCircle = () => (
-    <div className={styles.outerRing}>
-      <div 
-        className={`${styles.innerCircle} ${hoverProgress > 0 ? styles.hovering : ''}`}
-        style={{ '--progress': `${hoverProgress}%` }}
-      >
-        <div className={styles.shutterIcon}>📸</div>
-        {hoverProgress > 0 && (
-          <div className={styles.progressFill} style={{ height: `${hoverProgress}%` }} />
-        )}
-      </div>
-    </div>
-  );
-
   return (
     <>
-      {/* 上部シャッター */}
-      <div className={`${styles.hitArea} ${styles.topArea}`}>
-        <ButtonCircle />
-      </div>
-
-      {/* 下部シャッター */}
-      <div className={`${styles.hitArea} ${styles.bottomArea}`}>
-        <ButtonCircle />
+      <div className={styles.shutterContainer}>
+        {/* 🌟 物理クリック(onClick)を確実に追加 */}
+        <button 
+          className={styles.shutterButton} 
+          onClick={triggerShutter}
+          aria-label="シャッター"
+        >
+          <div className={styles.innerCircle}>
+            {hoverProgress > 0 && (
+              <div className={styles.progressFill} style={{ height: `${hoverProgress}%` }} />
+            )}
+          </div>
+        </button>
       </div>
 
       {countdown !== null && (
         <div className={styles.countdownOverlay}>
-          <div className={styles.countdownNumber}>{countdown > 0 ? countdown : '📸'}</div>
+          <div className={styles.countdownNumber}>{countdown > 0 ? countdown : ''}</div>
         </div>
       )}
-
       <canvas ref={canvasRef} style={{ display: 'none' }} />
     </>
   );
