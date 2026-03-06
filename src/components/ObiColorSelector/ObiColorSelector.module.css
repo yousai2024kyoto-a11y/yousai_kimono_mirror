@@ -3,8 +3,7 @@
   flex-direction: column;
   gap: 8px;
   padding: 5px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
-  border-radius: 12px;
+  width: 100%;
 }
 
 .label {
@@ -23,20 +22,30 @@
   gap: 8px;
 }
 
-/* カラーカードのスリム化 */
+/* 🌟 スマホ時は2列または横並びに */
+@media (max-width: 900px) or (orientation: portrait) {
+  .group {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
 .colorCard {
   width: 100%;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 6px 10px;
+  padding: 6px 12px;
   justify-content: flex-start !important;
+  min-width: 120px;
 }
 
 .swatch {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 3px;
+  flex-shrink: 0;
 }
 
 .colorInfo {
@@ -52,6 +61,6 @@
 }
 
 .mainName {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 500;
 }

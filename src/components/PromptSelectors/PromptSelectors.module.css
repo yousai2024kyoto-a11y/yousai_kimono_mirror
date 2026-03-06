@@ -1,13 +1,14 @@
 .selectorContainer {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* 詰める */
+  gap: 10px;
   padding: 5px;
+  min-width: 200px;
 }
 
 .settingLabel {
   font-family: var(--font-display);
-  font-size: 0.8rem; /* 小さく */
+  font-size: 0.8rem;
   color: var(--color-secondary);
   letter-spacing: 0.1em;
   border-left: 2px solid var(--color-secondary);
@@ -17,7 +18,14 @@
 .chipGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px; /* 詰める */
+  gap: 8px;
+}
+
+/* 🌟 スマホの横スクロール時は横並びにする */
+@media (max-width: 900px) or (orientation: portrait) {
+  .chipGroup {
+    flex-direction: row;
+  }
 }
 
 .personOption {
@@ -25,14 +33,14 @@
   align-items: center;
   gap: 10px;
   padding: 4px 8px;
-  width: 100%;
+  white-space: nowrap;
 }
 
 .personIcon {
-  font-size: 1.4rem; /* スマホ向けに縮小 */
+  font-size: 1.2rem;
 }
 
 .personLabel {
-  font-size: 0.9rem; /* スマホ向けに縮小 */
+  font-size: 0.9rem;
   font-weight: 500;
 }

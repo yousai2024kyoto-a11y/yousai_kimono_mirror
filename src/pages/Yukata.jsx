@@ -7,20 +7,18 @@ import ShutterButton from '../components/ShutterButton/ShutterButton';
 import HomeButton from '../components/HomeButton/HomeButton';
 import PersonSelector from '../components/PromptSelectors/PersonSelector';
 import ObiColorSelector from '../components/ObiColorSelector/ObiColorSelector';
+import BackgroundSelector from '../components/PromptSelectors/BackgroundSelector';
 import { HandTrackingProvider, useHandTrackingContext } from '../contexts/HandTrackingContext';
 import HandPointer from '../components/HandPointer/HandPointer';
 import styles from './Yukata.module.css';
 
 function GuidanceSystem() {
   const { fingerPosition } = useHandTrackingContext();
-  if (!fingerPosition) return (
-    <div className={styles.guidanceOverlay}>
-      <div className={styles.guidanceText}>画面の前に立ってください</div>
-    </div>
-  );
+  if (!fingerPosition) {
+    return <div className={styles.guidanceText}>画面の前に立ってください</div>;
+  }
   return null;
 }
-import BackgroundSelector from '../components/PromptSelectors/BackgroundSelector';
 
 export default function Yukata() {
   const navigate = useNavigate();
@@ -45,33 +43,57 @@ export default function Yukata() {
     sessionStorage.setItem('targetPerson', targetPerson);
     sessionStorage.setItem('obiColor', obiColor);
     sessionStorage.setItem('backgroundStyle', backgroundStyle);
-
-    setTimeout(() => {
-      navigate('/preview');
-    }, 200);
+    setTimeout(() => navigate('/preview'), 200);
   };
 
   return (
     <HandTrackingProvider videoRef={videoRef} isEnabled={useAI}>
       <div className={styles.container}>
+        
         <div className={styles.cameraWrapper}>
           <Camera deviceId={targetCameraId} videoRef={videoRef} />
-          <GuidanceSystem />
-          <div className={styles.overlayLeft}>
+        </div>
+
+        <div className={styles.uiOverlay}>
+          {/* 上部 */}
+          <header className={styles.header}>
+            <GuidanceSystem />
+          </header>
+
+          {/* 左サイド（PC用） */}
+          <aside className={styles.overlayLeft}>
             <ObiColorSelector value={obiColor} onChange={setObiColor} />
-          </div>
-          <div className={styles.overlayRight}>
+          </aside>
+
+          {/* 中央（シャッター） */}
+          <main className={styles.centerArea}>
+            <ShutterButton videoRef={videoRef} onCapture={handleCapture} />
+          </main>
+
+          {/* 右サイド（PC用） */}
+          <aside className={styles.overlayRight}>
             <PersonSelector value={targetPerson} onChange={setTargetPerson} />
             <div style={{ marginTop: '20px' }}>
               <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
             </div>
-          </div>
-          <ShutterButton videoRef={videoRef} onCapture={handleCapture} />
+          </aside>
+
+          {/* 下部パネル（モバイル用） */}
+          <footer className={styles.mobileControls}>
+            <div className={styles.horizontalScroll}>
+              <PersonSelector value={targetPerson} onChange={setTargetPerson} />
+              <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
+            </div>
+            <div style={{ padding: '0 10px' }}>
+              <ObiColorSelector value={obiColor} onChange={setObiColor} />
+            </div>
+          </footer>
         </div>
-...
+
         <div className={styles.topLeftOverlay}>
           <HomeButton onClick={() => navigate('/')} />
         </div>
+
         {isCapturing && <div className={styles.flashOverlay} />}
         <HandPointer />
       </div>
