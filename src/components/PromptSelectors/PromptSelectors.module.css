@@ -1,8 +1,9 @@
 .selectorContainer {
   display: flex;
   flex-direction: column;
-  gap: 1vmin;
+  gap: 8px;
   width: 100%;
+  align-items: center;
 }
 
 .settingLabel {
@@ -10,31 +11,34 @@
   font-size: 0.6rem;
   color: var(--color-secondary);
   text-align: center;
-  margin-bottom: 2px;
   opacity: 0.8;
+  white-space: nowrap;
 }
 
 .chipGroup {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
+  width: 100%;
 }
 
 .personOption {
   display: flex;
-  flex-direction: column; /* 🌟 縦並びにして幅を節約 */
+  flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 4px 2px;
+  gap: 4px;
   width: 100%;
+  padding: 4px 0;
 }
 
 .personIcon {
-  font-size: clamp(1rem, 3vw, 1.5rem);
+  font-size: 1.4rem;
+  line-height: 1;
 }
 
 .personLabel {
   font-size: 0.6rem;
-  font-weight: 400;
-  transform: scale(0.9); /* さらに小さく */
+  font-weight: 500;
+  color: #fff;
+  letter-spacing: 0.05em;
 }

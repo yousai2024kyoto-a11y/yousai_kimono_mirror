@@ -1,8 +1,9 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
   width: 100%;
+  align-items: center;
 }
 
 .label {
@@ -10,44 +11,46 @@
   font-size: 0.6rem;
   color: var(--color-secondary);
   text-align: center;
-  margin-bottom: 2px;
+  opacity: 0.8;
 }
 
 .group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  width: 100%;
 }
 
 .colorCard {
   width: 100%;
   display: flex;
-  flex-direction: column; /* 🌟 縦並び */
+  flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 4px 2px;
-  justify-content: center !important;
+  gap: 4px;
+  padding: 4px 0;
 }
 
 .swatch {
-  width: clamp(12px, 4vw, 18px);
-  height: clamp(12px, 4vw, 18px);
-  border-radius: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%; /* 丸型に変更して「和」の玉をイメージ */
+  border: 1px solid rgba(255,255,255,0.4);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .colorInfo {
   display: flex;
   flex-direction: column;
   align-items: center;
-  line-height: 1.0;
-}
-
-.japaneseName {
-  display: none; /* 🌟 幅が足りないので非表示に */
+  width: 100%;
 }
 
 .mainName {
   font-size: 0.6rem;
-  font-weight: 400;
-  transform: scale(0.85);
+  font-weight: 500;
+  color: #fff;
+}
+
+.japaneseName {
+  display: none;
 }

@@ -1,90 +1,42 @@
 .panel {
   position: relative;
-  background: rgba(20, 20, 25, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 12px 24px; /* PCサイズ */
+  background: rgba(255, 255, 255, 0.05); /* より透明感を出す */
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 6px 2px;
   color: var(--color-text);
-  font-size: 1rem;
-  font-weight: 500;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  min-width: 140px;
+  transition: all 0.2s ease;
+  width: 100%; /* パネル幅に合わせる */
+  min-width: 0; /* 制限解除 */
   overflow: hidden;
 }
 
-/* 🌟 スマホ時のサイズ制限 */
-@media (max-width: 600px) {
-  .panel {
-    padding: 8px 16px;
-    min-width: 100px;
-    font-size: 0.85rem;
-    gap: 6px;
-    border-radius: 8px;
-  }
-}
-
-.chip {
-  position: relative;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50px;
-  padding: 8px 16px;
-  color: var(--color-text);
-  font-size: 0.9rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-  min-width: 60px;
-}
-
-@media (max-width: 600px) {
-  .chip {
-    padding: 5px 12px;
-    font-size: 0.75rem;
-  }
-}
-
 .hovering {
-  transform: scale(1.05);
-  background: rgba(40, 40, 50, 0.8);
+  background: rgba(255, 255, 255, 0.15);
   border-color: var(--color-secondary);
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
 }
 
 .active {
   background: var(--color-primary);
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 0 15px rgba(179, 62, 92, 0.6);
-  font-weight: 700;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
 }
 
+/* 🌟 極小プログレスリング */
 .progressRing {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-90deg);
-  width: 44px; /* PC */
-  height: 44px;
+  width: 30px;
+  height: 30px;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.8;
-}
-
-@media (max-width: 600px) {
-  .progressRing {
-    width: 32px;
-    height: 32px;
-  }
 }
 
 .progressCircle {
@@ -96,6 +48,7 @@
   position: relative;
   z-index: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: inherit;
+  width: 100%;
 }
