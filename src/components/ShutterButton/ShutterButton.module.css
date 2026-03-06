@@ -1,101 +1,94 @@
-/* components/ShutterButton/ShutterButton.module.css */
-/* components/ShutterButton/ShutterButton.module.css の前半部分を置き換え */
-
 .hitArea {
   position: absolute;
-  left: 50%; 
-  bottom: 15%; 
-  transform: translate(-50%, 50%);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  z-index: 5;
+  pointer-events: auto;
 }
 
-/* 🌟 進化した外側のリング（グラスモーフィズム） */
+.topArea {
+  top: 150px;
+}
+
+.bottomArea {
+  bottom: 50px;
+}
+
 .outerRing {
-  width: 86px;
-  height: 86px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.15); /* 半透明の白 */
-  backdrop-filter: blur(12px); /* すりガラス効果 */
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5); /* うっすら白い縁取り */
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* 立体感を出す影 */
+  border: 4px solid rgba(255, 255, 255, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
 }
 
 .innerCircle {
-  width: 64px;
-  height: 64px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  
-  /* 背景を単色ではなく、下半分が黄色、上半分が白のグラデーションにする */
-  background-image: linear-gradient(to top, #f1c40f 50%, white 50%);
-  /* 背景のサイズを縦に2倍にする（黄色い部分を隠すため） */
-  background-size: 100% 200%;
-  /* 初期位置：上半分の白い部分だけを表示させる */
-  background-position: top;
-  
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
-  /* 背景の位置（水位）も滑らかに変化させる */
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), background-position 1s linear;
+  background-color: var(--color-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* 🌟 ホバー中のスタイル（水が溜まる！） */
-.innerCircle.hovering {
-  transform: scale(0.85); 
-  /* 背景の位置をずらして、下半分の黄色い部分が全体を覆うようにする */
-  background-position: bottom;
-  
-  box-shadow: 0 0 25px rgba(241, 196, 15, 0.8);
-  /* 1秒かけて水位が上がるように transition を設定（既存のまま） */
-  transition: all 1s linear; 
+.hovering {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px var(--color-primary);
 }
 
-/* 🌟 撮影中のスタイル（赤く光る） */
-.innerCircle.shooting {
-  transform: scale(0.7);
-  background-color: #ff4757;
-  box-shadow: 0 0 25px rgba(255, 71, 87, 0.8); /* まわりが赤く発光する！ */
-  transition: all 0.1s ease-out; /* 撮影の瞬間は素早く反応させる */
-}
-
-/* 🌟 ここから追加：カウントダウンの巨大な数字 */
-.countdownOverlay {
+.progressFill {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* 画面のど真ん中に配置 */
-  font-size: 150px;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--color-secondary);
+  opacity: 0.6;
+  z-index: 0;
+}
+
+.shutterIcon {
+  position: relative;
+  z-index: 1;
+}
+
+/* カウントダウン */
+.countdownOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.countdownNumber {
+  font-size: 15rem;
   color: white;
-  font-weight: bold;
-  text-shadow: 0px 4px 15px rgba(0, 0, 0, 0.6);
-  z-index: 20;
-  pointer-events: none; /* マウスの邪魔をしない */
-  
-  /* 1秒かけてポンッと出て消えるアニメーション */
-  animation: popIn 1s ease-out forwards;
+  font-family: var(--font-display);
+  text-shadow: 0 0 50px rgba(0,0,0,1);
+  animation: countdownPulse 1s ease-out infinite;
 }
 
-@keyframes popIn {
-  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-  20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-  80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
-}
-
-/* components/ShutterButton/ShutterButton.module.css の末尾に追記 */
-
-/* 🌟 指が上に乗っている（ホバー中）のスタイル */
-.innerCircle.hovering {
-  transform: scale(0.9); /* 少しだけ小さくする */
-  background-color: #f1c40f; /* 待機中であることがわかるように黄色っぽくする */
-  
-  /* 1秒（1000ms）かけてジワ〜っと色と大きさが変わるようにする */
-  /* タイマーと同じ秒数にすると、ゲージが溜まっていくように見えます！ */
-  transition: all 2s linear; 
+@keyframes countdownPulse {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
 }

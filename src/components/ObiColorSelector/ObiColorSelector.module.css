@@ -1,27 +1,81 @@
-/* components/ObiColorSelector/ObiColorSelector.module.css */
-
 .container {
-  margin-bottom: 25px;
-}
-
-.container:last-child {
-  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 10px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+  border-radius: 20px;
 }
 
 .label {
-  font-size: 15px;
-  color: white;
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.9);
-  margin-bottom: 12px;
-  display: block;
-  font-weight: bold;
-  letter-spacing: 1px;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  padding-left: 5px;
+  border-left: 3px solid var(--color-secondary);
 }
 
-/* 🌟 将来、レイアウトを変更したくなった時はここだけをイジればOK！ */
 .group {
   display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+
+/* カラーカードのカスタマイズ */
+.colorCard {
+  width: 100%;
+  display: flex;
   align-items: center;
-  gap: 12px; 
+  gap: 15px;
+  padding: 8px 16px;
+  justify-content: flex-start !important;
+}
+
+.swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 絹のような光沢エフェクト */
+.swatch::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+  transform: rotate(45deg);
+  animation: silkShine 3s infinite;
+}
+
+@keyframes silkShine {
+  0% { transform: translate(-100%, -100%) rotate(45deg); }
+  100% { transform: translate(100%, 100%) rotate(45deg); }
+}
+
+.colorInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.japaneseName {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  font-weight: 300;
+}
+
+.mainName {
+  font-size: 1rem;
+  font-weight: 500;
 }

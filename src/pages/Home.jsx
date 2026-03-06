@@ -5,7 +5,6 @@ import SettingsMenu from '../components/SettingsMenu/SettingsMenu';
 import styles from './Home.module.css';
 
 export default function Home() {
-  // 設定メニューが開いているかどうかの状態（State）
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -16,26 +15,31 @@ export default function Home() {
   return (
     <div className={styles.container}>
       
-      {/* 🌟 ギアアイコン（クリックで設定メニューを開く） */}
+      {/* ギアアイコン */}
       <button 
         className={styles.settingsButton} 
         onClick={() => setIsSettingsOpen(true)}
-        title="設定を開く"
+        title="設定"
       >
         ⚙️
       </button>
 
-      {/* メインのタイトル画面 */}
+      {/* メインコンテンツ */}
       <div className={styles.mainContent}>
+        <div className={styles.logoMark}>👘</div>
         <h1 className={styles.title}>Kimono Mirror</h1>
-        <p className={styles.subtitle}>AIで体験する、新しい浴衣の試着</p>
+        <p className={styles.subtitle}>
+          — AIで体験する、未来の試着 —<br/>
+          <span style={{ fontSize: '0.8em', opacity: 0.8, marginTop: '10px', display: 'block' }}>
+            画面の前に立って、手をかざしてください
+          </span>
+        </p>
 
         <button className={styles.startButton} onClick={startFitting}>
-          試着をはじめる
+          体験をはじめる
         </button>
       </div>
 
-      {/* 🌟 設定メニューのモーダル（isSettingsOpen が true の時だけ表示される） */}
       {isSettingsOpen && (
         <SettingsMenu onClose={() => setIsSettingsOpen(false)} />
       )}

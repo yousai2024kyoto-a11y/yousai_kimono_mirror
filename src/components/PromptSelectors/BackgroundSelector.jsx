@@ -1,17 +1,16 @@
-// components/PromptSelectors/PersonSelector.jsx
 import GestureButton from '../GestureButton/GestureButton';
 import styles from './PromptSelectors.module.css';
 
-export default function PersonSelector({ value, onChange }) {
+export default function BackgroundSelector({ value, onChange }) {
   const options = [
-    { id: 'woman', label: '女性', icon: '👘' },
-    { id: 'man', label: '男性', icon: '🥋' },
-    { id: 'child', label: '子供', icon: '🍡' }
+    { id: 'style_studio', label: 'フォトスタジオ', icon: '🏛️' },
+    { id: 'style_matsuri', label: '夏祭り', icon: '🏮' },
+    { id: 'style_shrine', label: '神社・参道', icon: '⛩️' }
   ];
 
   return (
     <div className={styles.selectorContainer}>
-      <span className={styles.settingLabel}>モデル選択</span>
+      <span className={styles.settingLabel}>背景・シチュエーション</span>
       <div className={styles.chipGroup}>
         {options.map(opt => (
           <GestureButton 

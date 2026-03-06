@@ -1,21 +1,38 @@
-/* components/PromptSelectors/PromptSelectors.module.css */
-
 .selectorContainer {
-  margin-bottom: 20px;
-}
-.settingLabel {
-  font-size: 14px;
-  color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-  margin-bottom: 10px;
-  display: block;
-  font-weight: bold;
-  letter-spacing: 1px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 10px;
 }
 
-/* 🌟 ここがYukata画面のチップの間隔！ */
+.settingLabel {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+  letter-spacing: 0.2em;
+  border-left: 3px solid var(--color-secondary);
+  padding-left: 10px;
+}
+
 .chipGroup {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* 🌟 横・縦の隙間。もっと広げたい場合は 20px や 25px に！ */
+  gap: 12px;
+}
+
+.personOption {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 5px 10px;
+  width: 100%;
+}
+
+.personIcon {
+  font-size: 1.8rem;
+}
+
+.personLabel {
+  font-size: 1.2rem;
+  font-weight: 500;
 }

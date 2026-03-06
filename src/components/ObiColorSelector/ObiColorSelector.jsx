@@ -1,40 +1,36 @@
-// components/ObiColorSelector/ObiColorSelector.jsx
 import GestureButton from '../GestureButton/GestureButton';
 import styles from './ObiColorSelector.module.css';
 
-export default function ObiColorSelector({ fingerPosition, value, onChange }) {
-  // 🌟 将来、色の種類を増やしたり、柄（Pattern）のデータを足したりするのもこのファイルの中だけで完結します
+export default function ObiColorSelector({ value, onChange }) {
   const options = [
-    { id: 'auto', label: 'おまかせ', color: '#f1c40f' }, 
-    { id: 'red', label: '赤系', color: '#ff4757' },
-    { id: 'blue', label: '青系', color: '#1e90ff' },
-    { id: 'yellow', label: '黄系', color: '#ffa502' },
-    { id: 'black', label: '黒系', color: '#2f3542' }
+    { id: 'auto', label: 'おまかせ', sub: '御任せ', color: '#8e8e93' }, 
+    { id: 'red', label: '赤系', sub: '緋色 (Hiiro)', color: '#b33e5c' },
+    { id: 'blue', label: '青系', sub: '瑠璃色 (Ruri)', color: '#1e50a2' },
+    { id: 'yellow', label: '黄系', sub: '黄金 (Kogane)', color: '#d4af37' },
+    { id: 'black', label: '黒系', sub: '墨色 (Sumiiro)', color: '#2b2b2b' }
   ];
 
   return (
     <div className={styles.container}>
-      <span className={styles.label}>🎀 帯の色</span>
+      <span className={styles.label}>帯の色・色彩</span>
       <div className={styles.group}>
         {options.map(opt => (
           <GestureButton 
             key={opt.id}
-            variant="chip" 
-            themeColor={opt.color}
-            fingerPosition={fingerPosition} 
+            variant="panel" 
             active={value === opt.id} 
             onClick={() => onChange(opt.id)}
           >
-            <span style={{
-              display: 'inline-block',
-              width: '14px',
-              height: '14px',
-              borderRadius: '50%',
-              backgroundColor: opt.color,
-              border: '2px solid rgba(255, 255, 255, 0.8)',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
-            }} />
-            {opt.label}
+            <div className={styles.colorCard}>
+              <div 
+                className={styles.swatch} 
+                style={{ backgroundColor: opt.color }} 
+              />
+              <div className={styles.colorInfo}>
+                <span className={styles.japaneseName}>{opt.sub}</span>
+                <span className={styles.mainName}>{opt.label}</span>
+              </div>
+            </div>
           </GestureButton>
         ))}
       </div>

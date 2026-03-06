@@ -1,7 +1,7 @@
 // src/components/Print.jsx
 import GestureButton from './GestureButton/GestureButton';
 
-export default function Print({ generatedImage, fingerPosition }) {
+export default function Print({ generatedImage }) {
   
   const handlePrint = () => {
     // 画像がまだ生成されていない時は何もしない
@@ -34,7 +34,7 @@ export default function Print({ generatedImage, fingerPosition }) {
   };
 
   return (
-    <GestureButton variant="panel" fingerPosition={fingerPosition} onClick={handlePrint}>
+    <GestureButton variant="panel" onClick={handlePrint}>
       <span style={{ fontSize: '32px' }}>🖨️</span>
       <span>印刷する</span>
     </GestureButton>

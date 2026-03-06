@@ -1,17 +1,18 @@
 import { useEffect } from 'react';
 
-// 引数に `videoRef` を追加して受け取ります！
 function Camera({ deviceId, videoRef }) {
   useEffect(() => {
     let currentStream = null;
 
     const startCamera = async () => {
       try {
-        const videoConstraints = deviceId ? { deviceId: { exact: deviceId } } : true;
+        const videoConstraints = deviceId ? { deviceId: { exact: deviceId } } : { 
+          width: { ideal: 1920 },
+          height: { ideal: 1080 }
+        };
         const stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints });
         currentStream = stream;
 
-        // 親から渡された videoRef をそのまま使います
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
         }
@@ -27,19 +28,26 @@ function Camera({ deviceId, videoRef }) {
         currentStream.getTracks().forEach(track => track.stop());
       }
     };
-  }, [deviceId, videoRef]); // 依存配列に videoRef も追加
+  }, [deviceId, videoRef]);
 
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div style={{ 
+      width: '100vw', 
+      height: '100vh', 
+      position: 'absolute', 
+      top: 0, 
+      left: 0,
+      overflow: 'hidden'
+    }}>
       <video 
-        ref={videoRef} // 親からもらった目印をセット！
+        ref={videoRef}
         autoPlay 
         playsInline 
         muted 
         style={{ 
           width: '100%', 
-          maxWidth: '100%', 
-          objectFit: 'cover',
+          height: '100%', 
+          objectFit: 'cover', // 🌟 これで画面いっぱいに広がる
           transform: 'scaleX(-1)' // 鏡面反転
         }} 
       />

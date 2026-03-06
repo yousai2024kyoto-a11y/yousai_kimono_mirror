@@ -1,8 +1,10 @@
 // components/HomeButton/HomeButton.jsx
 import { useEffect, useState, useRef } from 'react';
+import { useHandTrackingContext } from '../../contexts/HandTrackingContext';
 import styles from './HomeButton.module.css';
 
-export default function HomeButton({ onClick, fingerPosition }) {
+export default function HomeButton({ onClick }) {
+  const { fingerPosition } = useHandTrackingContext();
   const [isHovering, setIsHovering] = useState(false);
   const hoverTimerRef = useRef(null);
   const isClickedRef = useRef(false);
@@ -10,7 +12,6 @@ export default function HomeButton({ onClick, fingerPosition }) {
   // AIの当たり判定（画面の右上エリア）
   useEffect(() => {
     if (fingerPosition && !isClickedRef.current) {
-      // 🌟 画面右上（反転しているため、X座標は0.0に近い方が画面右になります）
       const btnX_min = 0.0; 
       const btnX_max = 0.3; // 右から30%の範囲
       const btnY_min = 0.0; 

@@ -3,9 +3,16 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Camera from '../components/Camera';
 import Print from '../components/Print';
-import useHandTracking from '../hooks/useHandTracking';
 import GestureButton from '../components/GestureButton/GestureButton';
+import { HandTrackingProvider } from '../contexts/HandTrackingContext';
+import HandPointer from '../components/HandPointer/HandPointer';
 import styles from './Preview.module.css';
+
+const BACKGROUND_PROMPTS = {
+  "style_studio": "清潔感のある白背景のフォトスタジオ。プロフェッショナルなライティング、ハイキー照明、被写体が際立つシンプルな背景。",
+  "style_matsuri": "活気ある日本の夏祭りの夜。背景にはたくさんの輝く提灯（ちょうちん）と屋台の明かり。お祭りの賑やかな雰囲気。背景は美しくボケている（ソフトフォーカス）。",
+  "style_shrine": "京都の古風な神社の参道。連なる赤い鳥居、石畳の階段、静寂で神秘的な雰囲気。周囲を取り囲む深い森と木漏れ日。"
+};
 
 export default function Preview() {
   const navigate = useNavigate();
@@ -18,10 +25,8 @@ export default function Preview() {
   const [targetCameraId, setTargetCameraId] = useState(null);
 
   const videoRef = useRef(null);
-  const fingerPosition = useHandTracking(videoRef, useAI);
 
   useEffect(() => {
-    // 🌟 防壁強化：画面が開いた「0.01秒後」に即座にロックをかける！
     if (hasRequested.current) return;
     hasRequested.current = true;
 
@@ -32,34 +37,66 @@ export default function Preview() {
     if (savedAI !== null) setUseAI(savedAI === 'true');
 
     const savedPhoto = sessionStorage.getItem('originalPhoto');
-    const targetPerson = sessionStorage.getItem('targetPerson') || 'woman';
-    const obiColor = sessionStorage.getItem('obiColor') || 'auto';
+    const gender = sessionStorage.getItem('targetPerson') || 'woman';
+    const obiColorSelection = sessionStorage.getItem('obiColor') || 'auto';
+    const background = sessionStorage.getItem('backgroundStyle') || 'style_studio';
 
     if (!savedPhoto) {
       navigate('/yukata');
       return;
     }
 
-    const generateYukata = async (base64String, person, obi) => {
+    const generateYukata = async (base64String, gender, obi) => {
       try {
-        const personStr = person === 'woman' ? 'woman' : person === 'man' ? 'man' : 'child';
-        const obiStr = obi === 'auto' ? 'a matching' : obi;
-        let personPrompt;
+        const bg_text = BACKGROUND_PROMPTS[background] || BACKGROUND_PROMPTS["style_studio"];
         
-        switch (person) {
-          case 'man':
-            personPrompt = '男性的な和モダンなスタイル。必ず『角帯』（男性用の幅の狭い帯）を使用してください。帯はウエストではなく、腰骨の位置で低く締めてください。女性のようなおはしょりはありません。必ず男性的な着方になるようにしてください。帯の結び方は結び目が見えないようにして、女性のような大きなリボンや幅広の帯は絶対に避けてください。'
-            break;
-          case 'child':
-            personPrompt = '帯は兵児帯。リボンはいらない。';
-            break;
-          case 'woman':
-          default:
-            personPrompt = '美しい女性のスタイル。「半幅帯」，「浴衣帯」，無地の帯。着物の柄に調和する美しい幅広の帯を選び、コーディネートしてください。"ウエストの高い位置で締めてください。'
-            break;
+        let subject_base, style_desc, obi_term, obi_instruction;
+        const garment_type = "「浴衣（夏着物）と帯」";
+
+        if (gender === "man") {
+          subject_base = "男性";
+          style_desc = "男性的な和モダンなスタイル";
+          obi_term = "「角帯」（男性用の幅の狭い帯）";
+          obi_instruction = (
+            "必ず『角帯』を使用してください。" +
+            "帯はウエストではなく、腰骨の位置で低く締めてください。" +
+            "女性のようなおはしょりはありません。必ず男性的な着方になるようにしてください。" +
+            "結び方は「貝の口」などの男性的な結び方にし、女性のような大きなリボンや幅広の帯は絶対に避けてください。"
+          );
+        } else {
+          subject_base = "女性";
+          style_desc = "美しい女性のスタイル";
+          obi_term = "「半幅帯」，「浴衣帯」，無地の帯";
+          obi_instruction = "ウエストの高い位置で締めてください。";
         }
 
-        const promptText = `あなたはプロのAIファッションスタイリスト兼フォトエディターです。入力画像を元に、超高画質な写真を生成してください。現在、画像の人物は${person}で，手に浴衣を持っています。あなたの任務は、その手に持っている浴衣を、実際にその人物に着せることです。${personPrompt}帯の色は ${obiStr} 。背景は清潔感のある白背景のフォトスタジオ。プロフェッショナルなライティング、ハイキー照明、被写体が際立つシンプルな背景。`;
+        const obi_color_info = obi !== 'auto' ? `帯の色は ${obi}。` : "";
+
+        const promptText = (
+          "あなたはプロのAIファッションスタイリスト兼フォトエディターです。" +
+          "入力画像を元に、超高画質な写真を生成してください。" +
+          `現在、画像の人物は手に${garment_type}を持っています。` +
+          `あなたの任務は、その手に持っている${garment_type}を、実際にその人物に着せることです。` +
+          `被写体：${subject_base}、${style_desc}。` +
+          `背景：${bg_text}。` +
+          "\n【重要要件（必ず守ること）】:\n" +
+          "1. 顔と髪型の完全維持（最優先事項）: \n" +
+          "   - 入力画像の人物の顔立ち、表情、特徴を厳密に維持してください。\n" +
+          "   - 髪型と髪色を入力画像そのまま維持してください。髪の長さや質感を勝手に変更しないでください。\n" +
+          "   - 丈は足元まで生成してください。\n" +
+          "2. 生地の再現: \n" +
+          "   - 人物が手に持っている布地や衣服の「柄・色・質感」を分析し、それを着用後の着物に正確に適用してください。" +
+          "   - 手に持っている布と全く違う柄を捏造しないでください。\n" +
+          `3. 帯（オビ）の仕様 - ${obi_term}: \n` +
+          `   - ${obi_instruction}\n` +
+          `   - ${obi_color_info} 手に帯を持っている場合は、その色や柄を必ず使用してください。\n` +
+          "4. ポーズと手: \n" +
+          "   - 人物は自然な立ち姿にしてください。\n" +
+          "   - 服をすでに「着ている」状態なので、手には何も持たせず、体の横に自然に下ろすか、お腹の前で軽く組ませてください。\n" +
+          "   - 下駄を履かせてください。\n" +
+          "5. 品質設定:\n" +
+          "   - 8k解像度、写真のようなリアルな質感、映画のようなライティング、高精細。"
+        );
 
         const response = await fetch('/api/generate', {
           method: 'POST',
@@ -69,7 +106,7 @@ export default function Preview() {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || 'サーバーで不明なエラーが発生しました');
+          throw new Error(errorData.message || 'サーバーエラー');
         }
 
         const data = await response.json();
@@ -85,48 +122,44 @@ export default function Preview() {
       }
     };
     
-    generateYukata(savedPhoto, targetPerson, obiColor);
+    generateYukata(savedPhoto, gender, obiColorSelection);
 
   }, [navigate]);
 
   const handleRetake = () => {
-    // 🌟 ゴミ箱強化：次の撮影に悪影響が出ないよう、古い写真を完全に消し去る！
     sessionStorage.removeItem('originalPhoto');
-    
-    // 再挑戦できるようにロックを解除
     hasRequested.current = false;
-    
     navigate('/yukata');
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.cameraBackground}>
-        {useAI && <Camera deviceId={targetCameraId} videoRef={videoRef} />}
-      </div>
-      <div className={styles.splitLayout}>
-        <div className={styles.imageArea}>
-          {isGenerating ? (
-            <div className={styles.loadingBox}>
-              <div className={styles.spinner}></div>
-              <h2>AIが着付け中...👘</h2>
-              <p>帯を結んでいます...</p>
-            </div>
-          ) : (
-            <img src={generatedImage} alt="Generated Yukata" className={styles.generatedImage} />
-          )}
+    <HandTrackingProvider videoRef={videoRef} isEnabled={useAI}>
+      <div className={styles.container}>
+        <div className={styles.cameraBackground}>
+          {useAI && <Camera deviceId={targetCameraId} videoRef={videoRef} />}
         </div>
-        <div className={styles.controlArea}>
-          <GestureButton variant="panel" fingerPosition={fingerPosition} onClick={handleRetake}>
-            <span style={{ fontSize: '32px' }}>📸</span>
-            <span>もう一度撮影</span>
-          </GestureButton>
-          <Print generatedImage={generatedImage} fingerPosition={fingerPosition} />
+        <div className={styles.splitLayout}>
+          <div className={styles.imageArea}>
+            {isGenerating ? (
+              <div className={styles.loadingBox}>
+                <div className={styles.spinner}></div>
+                <h2 className={styles.loadingTitle}>AIが着付けをしております...</h2>
+                <p className={styles.loadingSubtitle}>しばらくお待ちください</p>
+              </div>
+            ) : (
+              <img src={generatedImage} alt="Generated Yukata" className={styles.generatedImage} />
+            )}
+          </div>
+          <div className={styles.controlArea}>
+            <GestureButton variant="panel" onClick={handleRetake}>
+              <span style={{ fontSize: '24px' }}>📸</span>
+              <span>もう一度撮影</span>
+            </GestureButton>
+            <Print generatedImage={generatedImage} />
+          </div>
         </div>
+        <HandPointer />
       </div>
-      {useAI && fingerPosition && (
-        <div className={styles.pointer} style={{ left: `${(1 - fingerPosition.x) * 100}%`, top: `${fingerPosition.y * 100}%` }} />
-      )}
-    </div>
+    </HandTrackingProvider>
   );
 }

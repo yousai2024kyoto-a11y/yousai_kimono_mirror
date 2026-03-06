@@ -1,61 +1,65 @@
 // components/ShutterButton/ShutterButton.jsx
 import { useRef, useEffect, useState } from 'react';
+import { useHandTrackingContext } from '../../contexts/HandTrackingContext';
 import styles from './ShutterButton.module.css';
 
-export default function ShutterButton({ videoRef, fingerPosition, onCapture }) {
+export default function ShutterButton({ videoRef, onCapture }) {
+  const { fingerPosition } = useHandTrackingContext();
   const canvasRef = useRef(null);
-  
   const [isShooting, setIsShooting] = useState(false);
   const [countdown, setCountdown] = useState(null); 
   const isShootingRef = useRef(false);
+  
+  // ホバー進行度 (0〜100)
+  const [hoverProgress, setHoverProgress] = useState(0);
+  const startTimeRef = useRef(null);
+  const animationFrameRef = useRef(null);
 
-  // 🌟 追加：ホバー（指が重なっている）状態と、タイマーの目印
-  const [isHovering, setIsHovering] = useState(false);
-  const hoverTimerRef = useRef(null);
+  const DURATION = 2000; // 2秒キープでシャッター
 
-  // AIの当たり判定（ホバー機能付きにアップグレード！）
   useEffect(() => {
-    // 指が認識されている場合
-    if (fingerPosition) {
-      const btnX_min = 0.4; 
-      const btnX_max = 0.6;
-      const btnY_min = 0.75;
-      const btnY_max = 0.95;
+    if (fingerPosition && !isShootingRef.current) {
+      // 🌟 上部エリア または 下部エリア
+      const isTopArea = 
+        fingerPosition.x > 0.4 && fingerPosition.x < 0.6 &&
+        fingerPosition.y > 0.05 && fingerPosition.y < 0.25;
 
-      // 指がエリア内に入っているかどうかの判定結果（true / false）
-      const isInside = 
-        fingerPosition.x > btnX_min && fingerPosition.x < btnX_max &&
-        fingerPosition.y > btnY_min && fingerPosition.y < btnY_max;
+      const isBottomArea = 
+        fingerPosition.x > 0.4 && fingerPosition.x < 0.6 &&
+        fingerPosition.y > 0.75 && fingerPosition.y < 0.95;
+
+      const isInside = isTopArea || isBottomArea;
 
       if (isInside) {
-        // エリア内にいて、かつ「まだ撮影中でない」「タイマーも動いていない」場合
-        if (!isShootingRef.current && !hoverTimerRef.current) {
-          setIsHovering(true); // ホバー開始！（ボタンの見た目を変える用）
-          
-          // 🌟 2秒間（2000ミリ秒）指を止め続けたら、シャッターを起動する
-          hoverTimerRef.current = setTimeout(() => {
-            triggerShutter();
-            hoverTimerRef.current = null;
-            setIsHovering(false);
-          }, 2000); 
+        if (!startTimeRef.current) {
+          startTimeRef.current = performance.now();
+          const animate = (time) => {
+            const elapsed = time - startTimeRef.current;
+            const progress = Math.min((elapsed / DURATION) * 100, 100);
+            setHoverProgress(progress);
+
+            if (progress < 100) {
+              animationFrameRef.current = requestAnimationFrame(animate);
+            } else {
+              triggerShutter();
+              resetHover();
+            }
+          };
+          animationFrameRef.current = requestAnimationFrame(animate);
         }
       } else {
-        // 🌟 エリア外に出た場合：タイマーをキャンセルしてリセットする！
-        if (hoverTimerRef.current) {
-          clearTimeout(hoverTimerRef.current);
-          hoverTimerRef.current = null;
-          setIsHovering(false);
-        }
+        resetHover();
       }
     } else {
-      // 🌟 指が画面から消えた場合もリセットする
-      if (hoverTimerRef.current) {
-        clearTimeout(hoverTimerRef.current);
-        hoverTimerRef.current = null;
-        setIsHovering(false);
-      }
+      resetHover();
     }
   }, [fingerPosition]);
+
+  const resetHover = () => {
+    if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+    startTimeRef.current = null;
+    setHoverProgress(0);
+  };
 
   const triggerShutter = () => {
     isShootingRef.current = true;
@@ -89,33 +93,41 @@ export default function ShutterButton({ videoRef, fingerPosition, onCapture }) {
         ctx.translate(canvas.width, 0);
         ctx.scale(-1, 1);
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageUrl = canvas.toDataURL('image/jpeg');
-        onCapture(imageUrl); 
+        onCapture(canvas.toDataURL('image/jpeg')); 
       }
     }
   };
 
+  // 共通のボタンUIパーツ
+  const ButtonCircle = () => (
+    <div className={styles.outerRing}>
+      <div 
+        className={`${styles.innerCircle} ${hoverProgress > 0 ? styles.hovering : ''}`}
+        style={{ '--progress': `${hoverProgress}%` }}
+      >
+        <div className={styles.shutterIcon}>📸</div>
+        {hoverProgress > 0 && (
+          <div className={styles.progressFill} style={{ height: `${hoverProgress}%` }} />
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <>
-      <div className={styles.hitArea}>
-        <div className={styles.hitBoxHint} />
-        
-        <div className={styles.outerRing}>
-          <div 
-            // 🌟 クラス名の条件を追加：ホバー中（isHovering）なら .hovering クラスを付ける
-            className={`
-              ${styles.innerCircle} 
-              ${isHovering ? styles.hovering : ''} 
-              ${isShooting ? styles.shooting : ''}
-            `}
-            onClick={!isShootingRef.current ? triggerShutter : undefined}
-          />
-        </div>
+      {/* 上部シャッター */}
+      <div className={`${styles.hitArea} ${styles.topArea}`}>
+        <ButtonCircle />
       </div>
 
-      {countdown !== null && countdown > 0 && (
-        <div key={countdown} className={styles.countdownOverlay}>
-          {countdown}
+      {/* 下部シャッター */}
+      <div className={`${styles.hitArea} ${styles.bottomArea}`}>
+        <ButtonCircle />
+      </div>
+
+      {countdown !== null && (
+        <div className={styles.countdownOverlay}>
+          <div className={styles.countdownNumber}>{countdown > 0 ? countdown : '📸'}</div>
         </div>
       )}
 

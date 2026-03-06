@@ -1,7 +1,8 @@
-// hooks/useHandTracking.js
-import { useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 
-export default function useHandTracking(videoRef, isEnabled = true) {
+const HandTrackingContext = createContext(null);
+
+export const HandTrackingProvider = ({ children, videoRef, isEnabled = true }) => {
   const [fingerPosition, setFingerPosition] = useState(null);
   const handsRef = useRef(null);
   const cameraRef = useRef(null);
@@ -10,7 +11,6 @@ export default function useHandTracking(videoRef, isEnabled = true) {
     let isComponentMounted = true;
     let checkInterval;
 
-    // 🌟 設定がOFFの時は、AIもカメラ解析も完全に停止させる
     if (!isEnabled) {
       setFingerPosition(null);
       if (cameraRef.current) {
@@ -24,8 +24,9 @@ export default function useHandTracking(videoRef, isEnabled = true) {
       return;
     }
 
-    // AIの初期化処理
     const initMediaPipe = () => {
+      if (!window.Hands || !window.Camera) return;
+
       handsRef.current = new window.Hands({
         locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`,
       });
@@ -47,7 +48,6 @@ export default function useHandTracking(videoRef, isEnabled = true) {
         }
       });
 
-      // AIにカメラの映像を流し込む
       if (videoRef.current) {
         cameraRef.current = new window.Camera(videoRef.current, {
           onFrame: async () => {
@@ -62,19 +62,16 @@ export default function useHandTracking(videoRef, isEnabled = true) {
       }
     };
 
-    // 🌟 修正ポイント：スクリプトとvideoタグの両方が準備完了するまで待つ（ポーリング）
     const checkReady = () => {
       if (window.Hands && window.Camera && videoRef.current) {
-        clearInterval(checkInterval); // 準備が完了したら監視タイマーを止める
-        initMediaPipe(); // AIを確実に起動！
+        clearInterval(checkInterval);
+        initMediaPipe();
       }
     };
 
-    // 0.5秒ごとに準備できたかチェックする
     checkInterval = setInterval(checkReady, 500);
-    checkReady(); // 初回チェック
+    checkReady();
 
-    // クリーンアップ関数（画面移動時やOFFに切り替わった時）
     return () => {
       isComponentMounted = false;
       clearInterval(checkInterval);
@@ -87,7 +84,19 @@ export default function useHandTracking(videoRef, isEnabled = true) {
         handsRef.current = null;
       }
     };
-  }, [isEnabled]); // videoRefは内部のポーリングで監視するため依存配列から外します
+  }, [isEnabled, videoRef]);
 
-  return fingerPosition;
-}
+  return (
+    <HandTrackingContext.Provider value={{ fingerPosition, isEnabled }}>
+      {children}
+    </HandTrackingContext.Provider>
+  );
+};
+
+export const useHandTrackingContext = () => {
+  const context = useContext(HandTrackingContext);
+  if (!context) {
+    throw new Error('useHandTrackingContext must be used within a HandTrackingProvider');
+  }
+  return context;
+};
