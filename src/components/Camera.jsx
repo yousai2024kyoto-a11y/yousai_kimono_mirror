@@ -8,16 +8,17 @@ function Camera({ deviceId, videoRef }) {
 
     const startCamera = async () => {
       try {
-        // 🌟 カメラ制約の最適化
-        const videoConstraints = deviceId ? { deviceId: { exact: deviceId } } : { 
-          // 優先順位: 1. 指定された向き 2. デフォルト
-          facingMode: { ideal: 'user' }, 
-          width: { ideal: 1920 },
-          height: { ideal: 1080 }
-        };
+        // 🌟 deviceIdがある場合はそれを優先、ない場合はfacingMode指定
+        const videoConstraints = deviceId 
+          ? { deviceId: { exact: deviceId } } 
+          : { facingMode: 'user' };
 
         const stream = await navigator.mediaDevices.getUserMedia({ 
-          video: videoConstraints,
+          video: {
+            ...videoConstraints,
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          },
           audio: false 
         });
         
@@ -28,23 +29,26 @@ function Camera({ deviceId, videoRef }) {
           
           const track = stream.getVideoTracks()[0];
           const settings = track.getSettings();
-          
-          // 🌟 より確実にイン/アウト判定（facingModeが取れない場合のフォールバック）
-          const facing = settings.facingMode || '';
           const label = track.label.toLowerCase();
           
-          const isUser = facing.includes('user') || label.includes('front') || label.includes('selfie');
-          setIsFrontCamera(isUser);
+          // 🌟 反転判定の強化
+          // 1. facingMode をチェック
+          // 2. ラベルに front/selfie/user が含まれるかチェック
+          // 3. 背面カメラ（environment/back/rear）でない場合は、PCなどを含め「正面」とみなす
+          const isBack = settings.facingMode === 'environment' || 
+                         label.includes('back') || 
+                         label.includes('rear') || 
+                         label.includes('environment');
+          
+          setIsFrontCamera(!isBack);
         }
       } catch (error) {
-        console.error("カメラの起動に失敗しました:", error);
-        // 失敗した場合のフォールバック（最低限のカメラ起動）
-        try {
+        console.error("カメラ起動エラー:", error);
+        // deviceId指定で失敗した場合はデフォルトで再試行
+        if (deviceId) {
+          console.log("デフォルトカメラで再試行します...");
           const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true });
-          currentStream = fallbackStream;
           if (videoRef.current) videoRef.current.srcObject = fallbackStream;
-        } catch (e) {
-          console.error("フォールバックカメラも失敗:", e);
         }
       }
     };
