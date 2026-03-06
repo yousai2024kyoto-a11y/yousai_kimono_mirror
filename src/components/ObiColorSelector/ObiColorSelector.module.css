@@ -1,81 +1,57 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  padding: 10px;
+  gap: 8px;
+  padding: 5px;
   background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
-  border-radius: 20px;
+  border-radius: 12px;
 }
 
 .label {
   font-family: var(--font-display);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: var(--color-secondary);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  margin-bottom: 5px;
-  padding-left: 5px;
-  border-left: 3px solid var(--color-secondary);
+  letter-spacing: 0.1em;
+  margin-bottom: 2px;
+  padding-left: 8px;
+  border-left: 2px solid var(--color-secondary);
 }
 
 .group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
-/* カラーカードのカスタマイズ */
+/* カラーカードのスリム化 */
 .colorCard {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 8px 16px;
+  gap: 10px;
+  padding: 6px 10px;
   justify-content: flex-start !important;
 }
 
 .swatch {
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-  border: 1px solid rgba(255,255,255,0.2);
-  position: relative;
-  overflow: hidden;
-}
-
-/* 絹のような光沢エフェクト */
-.swatch::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
-  transform: rotate(45deg);
-  animation: silkShine 3s infinite;
-}
-
-@keyframes silkShine {
-  0% { transform: translate(-100%, -100%) rotate(45deg); }
-  100% { transform: translate(100%, 100%) rotate(45deg); }
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
 }
 
 .colorInfo {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .japaneseName {
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   opacity: 0.7;
-  font-weight: 300;
 }
 
 .mainName {
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 500;
 }
