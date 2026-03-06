@@ -49,30 +49,31 @@ export default function Yukata() {
 
         <div className={styles.uiLayer}>
           
-          {/* 上部: 案内 + 上部シャッター */}
           <section className={styles.topSection}>
             <Guidance />
             <ShutterButton videoRef={videoRef} onCapture={handleCapture} position="top" />
           </section>
 
-          {/* 中央: 左右にパネルを配置 (PC/スマホ共通) */}
           <section className={styles.midSection}>
+            {/* 左: 帯選択 */}
             <aside className={styles.panel}>
               <ObiColorSelector value={obiColor} onChange={setObiColor} />
             </aside>
 
-            {/* 中央はあえて空けて被写体を見せる */}
+            {/* 中央: 空間（被写体用） */}
             <div style={{ flex: 1, pointerEvents: 'none' }} />
 
-            <aside className={styles.panel}>
-              <PersonSelector value={targetPerson} onChange={setTargetPerson} />
-              <div style={{ marginTop: '10px' }}>
+            {/* 右: 人物と背景を独立したコンテナに入れる */}
+            <div className={styles.rightSideWrapper}>
+              <aside className={styles.panel}>
+                <PersonSelector value={targetPerson} onChange={setTargetPerson} />
+              </aside>
+              <aside className={styles.panel}>
                 <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
-              </div>
-            </aside>
+              </aside>
+            </div>
           </section>
 
-          {/* 下部: 下部シャッター */}
           <section className={styles.bottomSection}>
             <ShutterButton videoRef={videoRef} onCapture={handleCapture} position="bottom" />
           </section>

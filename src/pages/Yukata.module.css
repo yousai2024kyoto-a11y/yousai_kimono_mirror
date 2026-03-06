@@ -53,19 +53,29 @@
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* 🌟 角を少し丸めてフローティング感を出す */
+/* 🌟 右側のパネル群を縦に並べるコンテナ */
+.rightSideWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* パネル同士の隙間 */
+  pointer-events: none;
+  max-height: 75vh; /* 画面全体の75%に抑える */
+  justify-content: center;
+}
+
+/* 🌟 各パネルの最大高さを制限し、はみ出しを防止 */
 .panel {
   background: rgba(15, 18, 22, 0.7);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px; /* 10pxから拡大 */
+  border-radius: 16px;
   padding: 8px;
   pointer-events: auto;
   width: clamp(70px, 13vw, 180px);
-  max-height: 75vh;
+  max-height: 35vh; /* 🌟 1つのパネルが画面の35%を超えないようにする */
   overflow-y: auto;
   scrollbar-width: none;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* 影を強くして浮かせる */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 .panel::-webkit-scrollbar { display: none; }
 
