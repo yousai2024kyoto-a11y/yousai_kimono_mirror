@@ -27,13 +27,12 @@
 }
 
 .topSection {
-  height: 18%;
+  height: 15%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding-top: env(safe-area-inset-top);
-  gap: 5px;
 }
 
 .midSection {
@@ -41,58 +40,54 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2vw;
+  padding: 0 1vw; /* 🌟 ギリギリまで寄せる */
   width: 100%;
 }
 
 .bottomSection {
-  height: 18%;
+  height: 15%;
   display: flex;
   justify-content: center;
   align-items: center;
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* 🌟 パネル幅をさらに絞り、はみ出しを徹底防止 */
+/* 🌟 超極細パネル (ウィンドウの約1割強) */
 .panel {
-  background: rgba(15, 18, 22, 0.8);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
-  padding: 8px;
+  background: rgba(15, 18, 22, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 5px;
   pointer-events: auto;
-  width: clamp(120px, 30vw, 220px); /* 🌟 最大幅を260→220へ */
-  max-height: 70vh;
+  width: clamp(60px, 12vw, 180px); /* 🌟 幅を12vwに劇的縮小 */
+  max-height: 75vh;
   overflow-y: auto;
   scrollbar-width: none;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 .panel::-webkit-scrollbar { display: none; }
 
 /* スマホ版のさらなるスリム化 */
 @media (max-width: 600px) {
   .panel {
-    width: 38vw; /* 🌟 42vw → 38vw へ縮小 */
-    padding: 6px;
-  }
-  .midSection {
-    padding: 0 8px;
+    width: 15vw; /* スマホ時は少し広めに15vw */
+    padding: 4px;
   }
 }
 
 .guidance {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   color: var(--color-secondary);
-  padding: 5px 15px;
+  padding: 4px 12px;
   border-radius: 50px;
-  font-size: 0.8rem;
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  font-size: 0.75rem;
 }
 
 .homeBtn {
   position: absolute;
-  top: 15px;
-  left: 15px;
+  top: 10px;
+  left: 10px;
   z-index: 100;
   pointer-events: auto;
 }
@@ -102,6 +97,6 @@
   inset: 0;
   background: white;
   z-index: 999;
-  animation: flashOut 0.4s forwards;
+  animation: flashOut 0.3s forwards;
 }
 @keyframes flashOut { 0% { opacity: 1; } 100% { opacity: 0; } }

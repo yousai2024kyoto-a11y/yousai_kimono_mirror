@@ -1,57 +1,53 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 0.5vmin;
+  gap: 5px;
   width: 100%;
 }
 
 .label {
   font-family: var(--font-display);
-  font-size: clamp(0.6rem, 1.3vmin, 0.75rem);
+  font-size: 0.6rem;
   color: var(--color-secondary);
-  letter-spacing: 0.05em;
-  padding-left: 6px;
-  border-left: 2px solid var(--color-secondary);
+  text-align: center;
   margin-bottom: 2px;
 }
 
 .group {
   display: flex;
   flex-direction: column;
-  gap: 0.4vmin;
+  gap: 4px;
 }
 
 .colorCard {
   width: 100%;
   display: flex;
+  flex-direction: column; /* 🌟 縦並び */
   align-items: center;
-  gap: 0.8vmin;
-  padding: 0.4vmin 0.8vmin;
-  justify-content: flex-start !important;
-  min-width: 80px;
+  gap: 2px;
+  padding: 4px 2px;
+  justify-content: center !important;
 }
 
 .swatch {
-  width: 1.5vmin;
-  height: 1.5vmin;
-  min-width: 12px;
-  min-height: 12px;
+  width: clamp(12px, 4vw, 18px);
+  height: clamp(12px, 4vw, 18px);
   border-radius: 2px;
 }
 
 .colorInfo {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   line-height: 1.0;
 }
 
 .japaneseName {
-  font-size: clamp(0.45rem, 1vmin, 0.6rem);
-  opacity: 0.7;
+  display: none; /* 🌟 幅が足りないので非表示に */
 }
 
 .mainName {
-  font-size: clamp(0.65rem, 1.4vmin, 0.8rem);
-  font-weight: 500;
+  font-size: 0.6rem;
+  font-weight: 400;
+  transform: scale(0.85);
 }
