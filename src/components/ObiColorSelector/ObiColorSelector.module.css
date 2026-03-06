@@ -1,39 +1,51 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 1vmin;
   width: 100%;
 }
 
 .label {
   font-family: var(--font-display);
-  font-size: 0.75rem;
+  font-size: clamp(0.7rem, 1.5vmin, 0.85rem);
   color: var(--color-secondary);
   letter-spacing: 0.1em;
   padding-left: 8px;
   border-left: 2px solid var(--color-secondary);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.6vmin;
+}
+
+@media (max-width: 768px) {
+  .group {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
 
 .colorCard {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 4px 8px;
+  gap: 1vmin;
+  padding: 0.5vmin 1vmin;
   justify-content: flex-start !important;
+  min-width: 100px;
 }
 
 .swatch {
-  width: 16px;
-  height: 16px;
+  width: 1.8vmin;
+  height: 1.8vmin;
+  min-width: 14px;
+  min-height: 14px;
   border-radius: 3px;
+  flex-shrink: 0;
 }
 
 .colorInfo {
@@ -44,11 +56,11 @@
 }
 
 .japaneseName {
-  font-size: 0.6rem;
+  font-size: clamp(0.5rem, 1.2vmin, 0.65rem);
   opacity: 0.7;
 }
 
 .mainName {
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 1.6vmin, 0.85rem);
   font-weight: 500;
 }

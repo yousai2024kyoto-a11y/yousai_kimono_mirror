@@ -15,8 +15,8 @@ import styles from './Yukata.module.css';
 function Guidance() {
   const { fingerPosition } = useHandTrackingContext();
   return (
-    <div className={styles.guidanceChip}>
-      {fingerPosition ? "設定を選び、シャッターへ手をかざしてください" : "画面の前に立ってください"}
+    <div className={styles.guidance}>
+      {fingerPosition ? "設定を選んで、シャッターを押してください" : "画面の前に立ってください"}
     </div>
   );
 }
@@ -42,55 +42,51 @@ export default function Yukata() {
     <HandTrackingProvider videoRef={videoRef}>
       <div className={styles.container}>
         
-        {/* レイヤー1: 背景カメラ */}
+        {/* 背景: カメラ */}
         <div className={styles.cameraLayer}>
           <Camera videoRef={videoRef} />
         </div>
 
-        {/* レイヤー2: UI操作層 */}
+        {/* 🌟 3セクションHUDレイアウト */}
         <div className={styles.uiLayer}>
           
-          <header className={styles.headerArea}>
+          <section className={styles.topSection}>
             <Guidance />
-          </header>
+          </section>
 
-          <main className={styles.mainLayout}>
-            {/* PC: 左サイド */}
-            <aside className={styles.desktopSidebar}>
-              <div className={styles.glassPanel}>
-                <ObiColorSelector value={obiColor} onChange={setObiColor} />
-              </div>
+          <section className={styles.midSection}>
+            {/* PC左 */}
+            <aside className={`${styles.panel} ${styles.desktopSidebar}`}>
+              <ObiColorSelector value={obiColor} onChange={setObiColor} />
             </aside>
 
-            {/* 中央: シャッター */}
-            <div className={styles.centerArea}>
-              <ShutterButton videoRef={videoRef} onCapture={handleCapture} />
-            </div>
+            {/* 中央シャッター */}
+            <ShutterButton videoRef={videoRef} onCapture={handleCapture} />
 
-            {/* PC: 右サイド */}
-            <aside className={styles.desktopSidebar}>
-              <div className={styles.glassPanel}>
-                <PersonSelector value={targetPerson} onChange={setTargetPerson} />
-              </div>
-              <div className={styles.glassPanel}>
+            {/* PC右 */}
+            <aside className={`${styles.panel} ${styles.desktopSidebar}`}>
+              <PersonSelector value={targetPerson} onChange={setTargetPerson} />
+              <div style={{ marginTop: '10px' }}>
                 <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
               </div>
             </aside>
+          </section>
 
-            {/* スマホ: 下部パネル */}
-            <footer className={styles.mobilePanel}>
-              <div className={styles.mobileScrollRow}>
+          <section className={styles.bottomSection}>
+            {/* スマホ用パネル（縦長時のみ表示） */}
+            <div className={styles.mobilePanel}>
+              <div className={styles.scrollRow}>
                 <PersonSelector value={targetPerson} onChange={setTargetPerson} />
                 <BackgroundSelector value={backgroundStyle} onChange={setBackgroundStyle} />
               </div>
               <ObiColorSelector value={obiColor} onChange={setObiColor} />
-            </footer>
-          </main>
+            </div>
+          </section>
 
         </div>
 
         {/* 固定パーツ */}
-        <div className={styles.homeButtonPos}>
+        <div className={styles.homeBtn}>
           <HomeButton onClick={() => navigate('/')} />
         </div>
 

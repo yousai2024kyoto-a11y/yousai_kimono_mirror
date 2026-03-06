@@ -2,102 +2,79 @@
 
 .container {
   width: 100vw;
-  height: 100vh;
   height: 100svh;
-  position: relative;
   background-color: #000;
   overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
-/* 層1: 背景カメラ */
+/* カメラは背景に固定 */
 .cameraLayer {
   position: absolute;
   inset: 0;
   z-index: 0;
 }
 
-/* 層2: UIオーバーレイ */
+/* 🌟 メインHUDレイヤー */
 .uiLayer {
   position: relative;
   z-index: 10;
   width: 100%;
   height: 100%;
-  pointer-events: none; /* 隙間をクリック透過 */
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  pointer-events: none;
 }
 
-/* 上部案内 */
-.headerArea {
-  width: 100%;
+/* 上部エリア（15%） */
+.topSection {
+  height: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+/* 中央エリア（60%）: PCは左右にパネル、中央にシャッター */
+.midSection {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 5vw;
+}
+
+/* 下部エリア（25%）: スマホ時に活躍 */
+.bottomSection {
+  height: auto;
+  min-height: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-.guidanceChip {
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(212, 175, 55, 0.4);
-  color: var(--color-secondary);
-  padding: 10px 24px;
-  border-radius: 50px;
-  font-family: var(--font-display);
-  font-size: 0.9rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-}
-
-/* 🌟 メイン操作エリア (PC時は左右、スマホ時は中央〜下) */
-.mainLayout {
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 30px;
-  width: 100%;
-}
-
-/* パネル共通（Glassmorphism） */
-.glassPanel {
+/* パネル（Glassmorphism）: サイズを相対化 */
+.panel {
   background: rgba(15, 18, 22, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 15px;
+  border-radius: 15px;
+  padding: 1.5vmin;
   pointer-events: auto;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  max-height: 75vh; /* 🌟 画面外へのはみ出しを防止 */
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-.glassPanel::-webkit-scrollbar { display: none; }
-
-/* PC用サイドバー */
-.desktopSidebar {
-  width: 240px;
+  max-width: 25vw;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1vmin;
 }
 
-/* 中央エリア */
-.centerArea {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-}
-
-/* 🌟 スマホ用レスポンシブ調整 */
-@media (max-width: 768px) {
-  .mainLayout {
+/* 🌟 スマホ（縦長）向けの劇的変化 */
+@media (max-width: 768px) or (orientation: portrait) {
+  .midSection {
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: center;
     padding: 0;
   }
 
@@ -105,46 +82,44 @@
     display: none !important;
   }
 
-  /* 下部に集約されるスマホ用パネル */
   .mobilePanel {
-    width: 100%;
-    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 100%);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255,255,255,0.15);
-    border-radius: 24px 24px 0 0;
-    padding: 20px 15px calc(20px + env(safe-area-inset-bottom));
-    pointer-events: auto;
+    width: 95vw;
+    max-width: none;
+    background: rgba(10, 10, 12, 0.9);
+    border-radius: 20px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
     gap: 15px;
+    pointer-events: auto;
   }
 
-  .mobileScrollRow {
+  .scrollRow {
     display: flex;
     overflow-x: auto;
-    gap: 12px;
+    gap: 10px;
     padding-bottom: 5px;
-    scrollbar-width: none;
-  }
-  .mobileScrollRow::-webkit-scrollbar { display: none; }
-
-  .centerArea {
-    padding-bottom: 30px;
+    width: 100%;
   }
 }
 
-/* PC時の非表示制御 */
-@media (min-width: 769px) {
-  .mobilePanel {
-    display: none !important;
-  }
+/* 表示制御 */
+@media (min-width: 769px) and (orientation: landscape) {
+  .mobilePanel { display: none !important; }
 }
 
-/* その他パーツ */
-.homeButtonPos {
+.guidance {
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--color-secondary);
+  padding: 8px 24px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+}
+
+.homeBtn {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 15px;
+  left: 15px;
   z-index: 100;
   pointer-events: auto;
 }
@@ -153,13 +128,7 @@
   position: absolute;
   inset: 0;
   background: white;
-  z-index: 9999;
-  pointer-events: none;
-  animation: flashAnim 0.4s ease-out forwards;
+  z-index: 999;
+  animation: flashOut 0.4s forwards;
 }
-
-@keyframes flashAnim {
-  0% { opacity: 0; }
-  25% { opacity: 1; }
-  100% { opacity: 0; }
-}
+@keyframes flashOut { 0% { opacity: 1; } 100% { opacity: 0; } }
